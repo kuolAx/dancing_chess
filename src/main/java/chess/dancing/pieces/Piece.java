@@ -2,6 +2,10 @@ package chess.dancing.pieces;
 
 import chess.dancing.board.ChessBoard;
 import chess.dancing.board.Square;
+import chess.dancing.pieces.state.DefaultPieceState;
+import chess.dancing.pieces.state.KingState;
+import chess.dancing.pieces.state.PawnState;
+import chess.dancing.pieces.state.PieceState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

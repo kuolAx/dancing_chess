@@ -1,4 +1,4 @@
-package chess.dancing.pieces;
+package chess.dancing.pieces.state;
 
 import lombok.Getter;
 import lombok.Setter;
