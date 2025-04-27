@@ -21,29 +21,6 @@ public enum Square {
         this.column = column;
     }
 
-    public boolean isDiagonalTo(Square square) {
-        int rowDifference = getRowDiff(square);
-        int columnDifference = getColumnDiff(square);
-
-        return (rowDifference == columnDifference) && rowDifference > 0;
-    }
-
-    public boolean isInRowWith(Square square) {
-        return this.row == square.row;
-    }
-
-    public boolean isInColumnWith(Square square) {
-        return this.column == square.column;
-    }
-
-    public int getRowDiff(Square square) {
-        return Math.abs(this.row - square.row);
-    }
-
-    public int getColumnDiff(Square square) {
-        return Math.abs(this.column - square.column);
-    }
-
     public static Square getByCoordinates(int column, int row) {
         for (Square square : values()) {
             if (square.column == column && square.row == row) {
@@ -51,5 +28,28 @@ public enum Square {
             }
         }
         throw new IllegalArgumentException("Row/column not in bounds 1, 1 to 8, 8");
+    }
+
+    public boolean isDiagonalTo(Square square) {
+        int rowDiff = getRowDiff(square);
+        int columnDiff = getColumnDiff(square);
+
+        return (rowDiff == columnDiff) && rowDiff > 0;
+    }
+
+    public boolean isInRowWith(Square square) {
+        return row == square.row;
+    }
+
+    public boolean isInColumnWith(Square square) {
+        return column == square.column;
+    }
+
+    public int getRowDiff(Square square) {
+        return Math.abs(row - square.row);
+    }
+
+    public int getColumnDiff(Square square) {
+        return Math.abs(column - square.column);
     }
 }
