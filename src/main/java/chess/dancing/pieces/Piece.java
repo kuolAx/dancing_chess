@@ -13,7 +13,10 @@ public class Piece {
 
     private final String id;
 
-    private final PieceType pieceType;
+    private final PieceType type;
+
+    @Builder.Default
+    private PieceState state = null;
 
     private Color color;
 
@@ -28,6 +31,17 @@ public class Piece {
     }
 
     public boolean canMoveTo(Square from, Square to, ChessBoard board) {
-        return pieceType.getMoveValidator().isLegalMove(this, from, to, board);
+        return type.getMoveValidator().isLegalMove(this, from, to, board);
+    }
+
+    public PieceState getState() {
+        if (state == null) {
+            state = switch (type) {
+                case PAWN -> new PawnState();
+                case KING -> new KingState();
+                default -> new DefaultPieceState();
+            };
+        }
+        return state;
     }
 }

@@ -22,10 +22,10 @@ public class ChessBoard {
                     Square square = startingSquares.get(i);
                     String id = color.name().charAt(0)
                             + "_" + type.name()
-                            + (type.getNumberOfPieces() > 1 ? "_" + (i+1) : "");
+                            + (type.getNumberOfPieces() > 1 ? "_" + (i + 1) : "");
 
                     Piece piece = Piece.builder()
-                            .pieceType(type)
+                            .type(type)
                             .color(color)
                             .id(id)
                             .build();
@@ -40,7 +40,7 @@ public class ChessBoard {
         Piece piece = pieces.get(from);
         if (piece == null) return false;
 
-        return piece.getPieceType().getMoveValidator().isLegalMove(piece, from, to, this);
+        return piece.getType().getMoveValidator().isLegalMove(piece, from, to, this);
     }
 }
 
