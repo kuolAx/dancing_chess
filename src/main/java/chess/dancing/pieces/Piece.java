@@ -28,7 +28,6 @@ public class Piece {
     }
 
     public boolean canMoveTo(Square from, Square to, ChessBoard board) {
-        // Delegiere an die Strategie des jeweiligen Figurtyps
-        return pieceType.getMoveValidator().isValidMove(this, from, to, board);
+        return pieceType.getMoveValidator().isLegalMove(this, from, to, board);
     }
 }

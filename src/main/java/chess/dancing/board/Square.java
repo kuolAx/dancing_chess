@@ -28,11 +28,11 @@ public enum Square {
         return (rowDifference == columnDifference) && rowDifference > 0;
     }
 
-    public boolean isInSameRow(Square square) {
+    public boolean isInRowWith(Square square) {
         return this.row == square.row;
     }
 
-    public boolean isInSameColumn(Square square) {
+    public boolean isInColumnWith(Square square) {
         return this.column == square.column;
     }
 

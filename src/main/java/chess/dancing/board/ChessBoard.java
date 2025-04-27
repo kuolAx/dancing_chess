@@ -5,15 +5,15 @@ import chess.dancing.pieces.Piece;
 import chess.dancing.pieces.PieceType;
 import lombok.Getter;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 public class ChessBoard {
-    private final Map<Square, Piece> pieces = new HashMap<>();
+    private final Map<Square, Piece> pieces = new EnumMap<>(Square.class);
 
-    public void initialize() {
+    public void initializeBoard() {
         for (Color color : Color.values()) {
             for (PieceType type : PieceType.values()) {
                 List<Square> startingSquares = type.getStartingSquares(color);
@@ -34,6 +34,13 @@ public class ChessBoard {
                 }
             }
         }
+    }
+
+    public boolean isLegalMove(Square from, Square to) {
+        Piece piece = pieces.get(from);
+        if (piece == null) return false;
+
+        return piece.getPieceType().getMoveValidator().isLegalMove(piece, from, to, this);
     }
 }
 
