@@ -19,12 +19,9 @@ public class Piece {
     private final String id;
 
     private final PieceType type;
-
+    private final Color color;
     @Builder.Default
     private PieceState state = null;
-
-    private Color color;
-
     private Square square;
 
     private Piece dancePartner;
