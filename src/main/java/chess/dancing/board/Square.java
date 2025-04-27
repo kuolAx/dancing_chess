@@ -22,8 +22,8 @@ public enum Square {
     }
 
     public boolean isDiagonalTo(Square square) {
-        int rowDifference = Math.abs(this.row - square.row);
-        int columnDifference = Math.abs(this.column - square.column);
+        int rowDifference = getRowDiff(square);
+        int columnDifference = getColumnDiff(square);
 
         return (rowDifference == columnDifference) && rowDifference > 0;
     }
@@ -34,6 +34,14 @@ public enum Square {
 
     public boolean isInColumnWith(Square square) {
         return this.column == square.column;
+    }
+
+    public int getRowDiff(Square square) {
+        return Math.abs(this.row - square.row);
+    }
+
+    public int getColumnDiff(Square square) {
+        return Math.abs(this.column - square.column);
     }
 
     public static Square getByCoordinates(int column, int row) {
