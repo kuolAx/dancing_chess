@@ -37,12 +37,17 @@ public class ChessBoard {
     }
 
     public void movePiece(Square from, Square to) {
-        Piece piece = pieces.replace(from, null);
+        Piece piece = pieces.get(from);
 
         if (piece == null) return;
 
-        piece.setSquare(to);
+        pieces.put(from, null);
         pieces.put(to, piece);
+        piece.setSquare(to);
+    }
+
+    public Piece getPieceAt(Square at) {
+        return pieces.get(at);
     }
 
     public void simulateMove(Square from, Square to) {

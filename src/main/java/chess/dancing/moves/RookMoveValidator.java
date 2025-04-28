@@ -4,26 +4,43 @@ import chess.dancing.board.ChessBoard;
 import chess.dancing.board.Square;
 import chess.dancing.pieces.Piece;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RookMoveValidator implements MoveValidator {
     @Override
-    public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
-        return false;
+    public List<Square> getPotentialTargetSquares(Piece piece, Square from, ChessBoard board) {
+        return Arrays.stream(Square.values())
+                .filter(s -> from.isInRowWith(s) || from.isInColumnWith(s))
+                .toList();
     }
 
     @Override
-    public List<Square> getAllLegalMoves(Piece piece, Square from, ChessBoard board) {
-        List<Square> legalMoves = new ArrayList<>();
+    public boolean isLegalTargetSquareForPiece(Square from, Square to) {
+        return !from.isInColumnWith(to) || !from.isInRowWith(to);
+    }
 
-        // todo only check squares relevant for rook movement
-        for (Square to : Square.values()) {
-            if (to.isInColumnWith(from) || to.isInRowWith(from))
-                // todo filter moves blocked by same color or blocked by taking opposite color piece
-                legalMoves.add(to);
+    @Override
+    public boolean isPathClear(Square from, Square to, ChessBoard board) {
+        if (from.isInRowWith(to)) {
+            int row = from.getRow();
+            int startCol = Math.min(from.getColumn(), to.getColumn());
+            int endCol = Math.max(from.getColumn(), to.getColumn());
+
+            // Check every square on the way, except start and target
+            for (int col = startCol + 1; col < endCol; col++) {
+                if (board.getPieceAt(Square.getByCoordinates(col, row)) != null) return false;
+            }
+        } else if (from.isInColumnWith(to)) {
+            int col = from.getColumn();
+            int startRow = Math.min(from.getRow(), to.getRow());
+            int endRow = Math.max(from.getRow(), to.getRow());
+
+            // Check every square on the way, except start and target
+            for (int row = startRow + 1; row < endRow; row++) {
+                if (board.getPieceAt(Square.getByCoordinates(col, row)) != null) return false;
+            }
         }
-
-        return legalMoves;
+        return true;
     }
 }
