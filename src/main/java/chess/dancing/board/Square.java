@@ -27,7 +27,7 @@ public enum Square {
                 return square;
             }
         }
-        throw new IllegalArgumentException("Row/column not in bounds 1, 1 to 8, 8");
+        return null;
     }
 
     public boolean isDiagonalTo(Square square) {

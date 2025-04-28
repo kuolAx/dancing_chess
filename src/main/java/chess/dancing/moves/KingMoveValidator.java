@@ -4,6 +4,9 @@ import chess.dancing.board.ChessBoard;
 import chess.dancing.board.Square;
 import chess.dancing.pieces.Piece;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KingMoveValidator implements MoveValidator {
     @Override
     public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
@@ -22,5 +25,18 @@ public class KingMoveValidator implements MoveValidator {
     private boolean isCastlingMove(Piece piece, Square from, Square to, ChessBoard board) {
         // check for castling conditions
         return false;
+    }
+
+    @Override
+    public List<Square> getAllLegalMoves(Piece piece, Square from, ChessBoard board) {
+        List<Square> legalMoves = new ArrayList<>();
+
+        for (Square square : Square.values()) {
+            if (isLegalMove(piece, from, square, board)) {
+                legalMoves.add(square);
+            }
+        }
+
+        return legalMoves;
     }
 }
