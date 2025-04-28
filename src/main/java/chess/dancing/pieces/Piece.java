@@ -39,7 +39,18 @@ public class Piece {
     }
 
     public List<Square> getAllLegalMoves(Square from, ChessBoard board) {
-        return type.getMoveValidator().getAllLegalMoves(this, from, board);
+        List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
+
+        return allLegalMoves.stream()
+                .filter(to -> !wouldLeaveKingInCheck(from, to, board))
+                .toList();
+    }
+
+    private boolean wouldLeaveKingInCheck(Square from, Square to, ChessBoard board) {
+        board.simulateMove(from, to);
+        boolean isKingInCheck = board.isKingInCheck(getColor());
+        board.simulateMove(to, from);
+        return isKingInCheck;
     }
 
     public PieceState getState() {
