@@ -1,15 +1,15 @@
-package chess.dancing.pieces;
+package com.kuolax.dancingchess.pieces;
 
-import chess.dancing.moves.BishopMoveValidator;
-import chess.dancing.moves.KingMoveValidator;
-import chess.dancing.moves.KnightMoveValidator;
-import chess.dancing.moves.MoveValidator;
-import chess.dancing.board.Square;
-import chess.dancing.board.StandardStartPositions;
-import chess.dancing.board.StartPositionsProvider;
-import chess.dancing.moves.PawnMoveValidator;
-import chess.dancing.moves.QueenMoveValidator;
-import chess.dancing.moves.RookMoveValidator;
+import com.kuolax.dancingchess.board.Square;
+import com.kuolax.dancingchess.board.StandardStartPositions;
+import com.kuolax.dancingchess.board.StartPositionsProvider;
+import com.kuolax.dancingchess.moves.BishopMoveValidator;
+import com.kuolax.dancingchess.moves.KingMoveValidator;
+import com.kuolax.dancingchess.moves.KnightMoveValidator;
+import com.kuolax.dancingchess.moves.MoveValidator;
+import com.kuolax.dancingchess.moves.PawnMoveValidator;
+import com.kuolax.dancingchess.moves.QueenMoveValidator;
+import com.kuolax.dancingchess.moves.RookMoveValidator;
 import lombok.Getter;
 
 import java.util.List;

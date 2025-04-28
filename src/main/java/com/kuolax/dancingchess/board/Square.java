@@ -1,4 +1,4 @@
-package chess.dancing.board;
+package com.kuolax.dancingchess.board;
 
 import lombok.Getter;
 
@@ -13,43 +13,43 @@ public enum Square {
     G1(7, 1), G2(7, 2), G3(7, 3), G4(7, 4), G5(7, 5), G6(7, 6), G7(7, 7), G8(7, 8),
     H1(8, 1), H2(8, 2), H3(8, 3), H4(8, 4), H5(8, 5), H6(8, 6), H7(8, 7), H8(8, 8);
 
-    private final int row;
-    private final int column;
+    private final int x;
+    private final int y;
 
-    Square(int row, int column) {
-        this.row = row;
-        this.column = column;
+    Square(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public static Square getByCoordinates(int column, int row) {
+    public static Square getByCoordinates(int x, int y) {
         for (Square square : values()) {
-            if (square.column == column && square.row == row) {
+            if (square.x == x && square.y == y) {
                 return square;
             }
         }
         return null;
     }
 
-    public boolean isDiagonalTo(Square square) {
-        int rowDiff = getRowDiff(square);
-        int columnDiff = getColumnDiff(square);
+    public boolean isDiagonalTo(Square target) {
+        int rowDiff = getXDiff(target);
+        int columnDiff = getYDiff(target);
 
         return (rowDiff == columnDiff) && rowDiff > 0;
     }
 
-    public boolean isInRowWith(Square square) {
-        return row == square.row;
+    public boolean isHorizontalTo(Square square) {
+        return x == square.x;
     }
 
-    public boolean isInColumnWith(Square square) {
-        return column == square.column;
+    public boolean isVerticalTo(Square square) {
+        return y == square.y;
     }
 
-    public int getRowDiff(Square square) {
-        return Math.abs(row - square.row);
+    public int getXDiff(Square square) {
+        return Math.abs(x - square.x);
     }
 
-    public int getColumnDiff(Square square) {
-        return Math.abs(column - square.column);
+    public int getYDiff(Square square) {
+        return Math.abs(y - square.y);
     }
 }

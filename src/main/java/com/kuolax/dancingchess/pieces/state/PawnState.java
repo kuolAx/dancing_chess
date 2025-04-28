@@ -1,4 +1,4 @@
-package chess.dancing.pieces.state;
+package com.kuolax.dancingchess.pieces.state;
 
 import lombok.Getter;
 import lombok.Setter;

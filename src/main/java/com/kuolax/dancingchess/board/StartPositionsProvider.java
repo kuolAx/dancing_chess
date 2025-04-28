@@ -1,6 +1,6 @@
-package chess.dancing.board;
+package com.kuolax.dancingchess.board;
 
-import chess.dancing.pieces.Color;
+import com.kuolax.dancingchess.pieces.Color;
 
 import java.util.List;
 

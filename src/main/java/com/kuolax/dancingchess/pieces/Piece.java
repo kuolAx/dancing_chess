@@ -1,12 +1,12 @@
-package chess.dancing.pieces;
+package com.kuolax.dancingchess.pieces;
 
-import chess.dancing.board.ChessBoard;
-import chess.dancing.board.Square;
-import chess.dancing.pieces.state.DefaultPieceState;
-import chess.dancing.pieces.state.KingState;
-import chess.dancing.pieces.state.PawnState;
-import chess.dancing.pieces.state.PieceState;
-import chess.dancing.pieces.state.RookState;
+import com.kuolax.dancingchess.board.Board;
+import com.kuolax.dancingchess.board.Square;
+import com.kuolax.dancingchess.pieces.state.DefaultPieceState;
+import com.kuolax.dancingchess.pieces.state.KingState;
+import com.kuolax.dancingchess.pieces.state.PawnState;
+import com.kuolax.dancingchess.pieces.state.PieceState;
+import com.kuolax.dancingchess.pieces.state.RookState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +21,11 @@ public class Piece {
     private final String id;
 
     private final PieceType type;
+
     private final Color color;
+
     @Builder.Default
     private PieceState state = null;
-    private Square square;
 
     private Piece dancePartner;
 
@@ -34,11 +35,11 @@ public class Piece {
         dancePartner = null;
     }
 
-    public boolean canMoveTo(Square from, Square to, ChessBoard board) {
+    public boolean canMoveTo(Square from, Square to, Board board) {
         return type.getMoveValidator().isLegalMove(this, from, to, board);
     }
 
-    public List<Square> getAllLegalMoves(Square from, ChessBoard board) {
+    public List<Square> getAllLegalMoves(Square from, Board board) {
         List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
 
         return allLegalMoves.stream()
@@ -46,7 +47,7 @@ public class Piece {
                 .toList();
     }
 
-    private boolean wouldLeaveKingInCheck(Square from, Square to, ChessBoard board) {
+    private boolean wouldLeaveKingInCheck(Square from, Square to, Board board) {
         board.simulateMove(from, to);
         boolean isKingInCheck = board.isKingInCheck(getColor());
         board.simulateMove(to, from);
