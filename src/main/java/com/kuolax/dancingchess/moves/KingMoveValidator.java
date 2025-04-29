@@ -59,7 +59,7 @@ public class KingMoveValidator extends AbstractMoveValidator {
                 if (king.isMoved()) yield false;
                 if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_SHORT)) yield false;
                 if (isCastlingPathBlocked(KING_CASTLE_SHORT, kingColor, board)) yield false;
-                if (board.isKingInCheck(kingColor)) yield false;
+                if (board.isCheck(kingColor)) yield false;
                 if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
                 if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_SHORT)) yield false;
                 yield true;
@@ -68,7 +68,7 @@ public class KingMoveValidator extends AbstractMoveValidator {
                 if (king.isMoved()) yield false;
                 if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_LONG)) yield false;
                 if (isCastlingPathBlocked(KING_CASTLE_LONG, kingColor, board)) yield false;
-                if (board.isKingInCheck(kingColor)) yield false;
+                if (board.isCheck(kingColor)) yield false;
                 if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
                 if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_LONG)) yield false;
                 yield true;
@@ -107,13 +107,13 @@ public class KingMoveValidator extends AbstractMoveValidator {
     private boolean castlingSquaresAreAttacked(Board board, Color color, MoveType moveType) {
         if (moveType == KING_CASTLE_SHORT) {
             return switch (color) {
-                case WHITE -> board.canAnyPieceTakeOn(F1);
-                case BLACK -> board.canAnyPieceTakeOn(F8);
+                case WHITE -> board.canAnyPieceTakeOn(F1, color);
+                case BLACK -> board.canAnyPieceTakeOn(F8, color);
             };
         } else if (moveType == KING_CASTLE_LONG) {
             return switch (color) {
-                case WHITE -> board.canAnyPieceTakeOn(D1);
-                case BLACK -> board.canAnyPieceTakeOn(D8);
+                case WHITE -> board.canAnyPieceTakeOn(D1, color);
+                case BLACK -> board.canAnyPieceTakeOn(D8, color);
             };
         }
         return false;
