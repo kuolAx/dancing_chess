@@ -8,6 +8,20 @@ import com.kuolax.dancingchess.pieces.Piece;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.kuolax.dancingchess.board.Square.A1;
+import static com.kuolax.dancingchess.board.Square.A8;
+import static com.kuolax.dancingchess.board.Square.B1;
+import static com.kuolax.dancingchess.board.Square.B8;
+import static com.kuolax.dancingchess.board.Square.C1;
+import static com.kuolax.dancingchess.board.Square.C8;
+import static com.kuolax.dancingchess.board.Square.D1;
+import static com.kuolax.dancingchess.board.Square.D8;
+import static com.kuolax.dancingchess.board.Square.F1;
+import static com.kuolax.dancingchess.board.Square.F8;
+import static com.kuolax.dancingchess.board.Square.G1;
+import static com.kuolax.dancingchess.board.Square.G8;
+import static com.kuolax.dancingchess.board.Square.H1;
+import static com.kuolax.dancingchess.board.Square.H8;
 import static com.kuolax.dancingchess.moves.MoveType.KING_CASTLE_LONG;
 import static com.kuolax.dancingchess.moves.MoveType.KING_CASTLE_SHORT;
 import static com.kuolax.dancingchess.moves.MoveType.KING_MOVE;
@@ -31,21 +45,99 @@ public class KingMoveValidator extends AbstractMoveValidator {
 
     @Override
     public boolean isLegalMove(Piece king, Square from, Square to, Board board) {
-        MoveType kingMoveType = MoveType.determineKingMoveType(from, to, king.getColor());
+        Color kingColor = king.getColor();
+        MoveType kingMoveType = MoveType.determineKingMoveType(from, to, kingColor);
         if (kingMoveType == null) return false;
 
         return switch (kingMoveType) {
             case KING_MOVE -> {
-                if (board.getPieceAt(to) != null) yield false;
-                yield board.wouldMoveLeaveKingInCheck(from, to, king);
+                if (board.getPieceAt(to) != null) yield false; // king can't take/create union
+                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
+                yield true;
             }
             case KING_CASTLE_SHORT -> {
-                if (board.isKingInCheck(king.getColor())) yield false;
-                if (board.wouldMoveLeaveKingInCheck(from, to, king)) yield false;
+                if (king.isMoved()) yield false;
+                if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_SHORT)) yield false;
+                if (isCastlingPathBlocked(KING_CASTLE_SHORT, kingColor, board)) yield false;
+                if (board.isKingInCheck(kingColor)) yield false;
+                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
+                if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_SHORT)) yield false;
+                yield true;
             }
             case KING_CASTLE_LONG -> {
+                if (king.isMoved()) yield false;
+                if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_LONG)) yield false;
+                if (isCastlingPathBlocked(KING_CASTLE_LONG, kingColor, board)) yield false;
+                if (board.isKingInCheck(kingColor)) yield false;
+                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
+                if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_LONG)) yield false;
+                yield true;
             }
             default -> false;
         };
+    }
+
+    private boolean hasRookMovedBeforeCastling(Board board, Color color, MoveType moveType) {
+        if (moveType == KING_CASTLE_SHORT) {
+            return switch (color) {
+                case WHITE -> {
+                    Piece pieceAtH1 = board.getPieceAt(H1);
+                    yield pieceAtH1 != null && !pieceAtH1.isMoved();
+                }
+                case BLACK -> {
+                    Piece pieceAtH8 = board.getPieceAt(H8);
+                    yield pieceAtH8 != null && !pieceAtH8.isMoved();
+                }
+            };
+        } else if (moveType == KING_CASTLE_LONG) {
+            return switch (color) {
+                case WHITE -> {
+                    Piece pieceAtA1 = board.getPieceAt(A1);
+                    yield pieceAtA1 != null && !pieceAtA1.isMoved();
+                }
+                case BLACK -> {
+                    Piece pieceAtA8 = board.getPieceAt(A8);
+                    yield pieceAtA8 != null && !pieceAtA8.isMoved();
+                }
+            };
+        }
+        return false;
+    }
+
+    private boolean castlingSquaresAreAttacked(Board board, Color color, MoveType moveType) {
+        if (moveType == KING_CASTLE_SHORT) {
+            return switch (color) {
+                case WHITE -> board.canAnyPieceTakeOn(F1);
+                case BLACK -> board.canAnyPieceTakeOn(F8);
+            };
+        } else if (moveType == KING_CASTLE_LONG) {
+            return switch (color) {
+                case WHITE -> board.canAnyPieceTakeOn(D1);
+                case BLACK -> board.canAnyPieceTakeOn(D8);
+            };
+        }
+        return false;
+    }
+
+    private boolean isCastlingPathBlocked(MoveType moveType, Color color, Board board) {
+        if (moveType == KING_CASTLE_SHORT) {
+            return switch (color) {
+                case WHITE -> isSquaresEmpty(board, F1, G1);
+                case BLACK -> isSquaresEmpty(board, F8, G8);
+            };
+        } else if (moveType == KING_CASTLE_LONG) {
+            return switch (color) {
+                case WHITE -> isSquaresEmpty(board, D1, C1, B1);
+                case BLACK -> isSquaresEmpty(board, D8, C8, B8);
+            };
+        }
+        return false;
+    }
+
+    private boolean isSquaresEmpty(Board board, Square... squares) {
+        for (Square square : squares) {
+            if (board.getPieceAt(square) != null) return false;
+        }
+        return true;
     }
 }

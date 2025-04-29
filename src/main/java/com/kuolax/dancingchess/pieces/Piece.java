@@ -21,7 +21,7 @@ public class Piece {
 
     private Piece dancePartner;
 
-    private boolean hasMoved;
+    private boolean isMoved;
 
     private boolean isInUnion;
 
@@ -33,11 +33,19 @@ public class Piece {
         return type.getMoveValidator().isLegalMove(this, from, to, board);
     }
 
+    public boolean canTakeOn(Square from, Square to, Board board) {
+        return switch (getType()) {
+            case KING -> false;
+            case PAWN -> !from.isVerticalTo(to) && type.getMoveValidator().isLegalMove(this, from, to, board);
+            case ROOK, BISHOP, KNIGHT, QUEEN -> type.getMoveValidator().isLegalMove(this, from, to, board);
+        };
+    }
+
     public List<Square> getAllLegalMoves(Square from, Board board) {
         List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
 
         return allLegalMoves.stream()
-                .filter(to -> !board.wouldMoveLeaveKingInCheck(from, to, this))
+                .filter(to -> !board.wouldMovePutKingInCheck(from, to, this))
                 .toList();
     }
 }
