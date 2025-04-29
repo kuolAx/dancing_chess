@@ -95,8 +95,6 @@ public abstract class AbstractMoveValidator implements MoveValidator {
     protected final boolean isEmptySquareOrCanTakeOnTargetSquare(Piece piece, Square to, Board board) {
         Piece pieceAtTarget = board.getPieceAt(to);
         if (pieceAtTarget == null) return true;
-        // todo Pawn und King anders behandeln
-        // todo wenn schlagbare Figur vorhanden, dann muss vorhandene Union geprüft werden
 
         Color fromColor = piece.getColor();
         Color toColor = pieceAtTarget.getColor();
