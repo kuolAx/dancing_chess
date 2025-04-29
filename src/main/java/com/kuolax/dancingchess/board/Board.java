@@ -42,17 +42,10 @@ public class Board {
 
         pieces.put(from, null);
         pieces.put(to, piece);
-        // todo adapt to dancing (2 pieces on 1square check! - isInUnion or other)
     }
 
     public Piece getPieceAt(Square at) {
         return pieces.get(at);
-    }
-
-    public void simulateMove(Square from, Square to) {
-        Piece piece = pieces.put(from, null);
-        if (piece == null) return;
-        pieces.put(to, piece);
     }
 
     public boolean isLegalMove(Square from, Square to) {
@@ -62,9 +55,22 @@ public class Board {
         return piece.getType().getMoveValidator().isLegalMove(piece, from, to, this);
     }
 
-    public boolean isKingInCheck(Color c) {
+    public boolean isKingInCheck(Color kingColor) {
         // todo implement
         return false;
+    }
+
+    public boolean wouldMoveLeaveKingInCheck(Square from, Square to, Piece piece) {
+        simulateMove(from, to);
+        boolean isKingInCheck = isKingInCheck(piece.getColor());
+        simulateMove(to, from);
+        return isKingInCheck;
+    }
+
+    private void simulateMove(Square from, Square to) {
+        Piece piece = pieces.put(from, null);
+        if (piece == null) return;
+        pieces.put(to, piece);
     }
 }
 

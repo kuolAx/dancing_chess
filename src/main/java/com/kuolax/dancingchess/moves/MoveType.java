@@ -1,6 +1,7 @@
 package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Square;
+import com.kuolax.dancingchess.pieces.Color;
 
 public enum MoveType {
     HORIZONTAL,
@@ -10,8 +11,9 @@ public enum MoveType {
     PAWN_SINGLE_FORWARD,
     PAWN_DOUBLE_FORWARD,
     PAWN_CAPTURE,
-    CASTLE_LONG,
-    CASTLE_SHORT;
+    KING_MOVE,
+    KING_CASTLE_SHORT,
+    KING_CASTLE_LONG;
 
     public static MoveType determineStandardMoveType(Square from, Square to) {
         if (from.isHorizontalTo(to)) return HORIZONTAL;
@@ -22,19 +24,49 @@ public enum MoveType {
         return null;
     }
 
+    public static boolean isKnightMove(Square from, Square to) {
+        int xDiff = Math.abs(from.getX() - to.getX());
+        int yDiff = Math.abs(from.getY() - to.getY());
+
+        return (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
+    }
+
+    public static boolean isKingMove(Square from, Square to, Color c) {
+        return isNormalKingMove(from, to, c)
+                || isKingShortCastleMove(from, to, c)
+                || isKingLongCastleMove(from, to, c);
+    }
+
+    public static MoveType determineKingMoveType(Square from, Square to, Color c) {
+        if (isNormalKingMove(from, to, c)) return KING_MOVE;
+        else if (isKingShortCastleMove(from, to, c)) return KING_CASTLE_SHORT;
+        else if (isKingLongCastleMove(from, to, c)) return KING_CASTLE_LONG;
+
+        return null;
+    }
+
+    private static boolean isNormalKingMove(Square from, Square to, Color c) {
+        return false;
+    }
+
+    private static boolean isKingShortCastleMove(Square from, Square to, Color c) {
+        return switch (c) {
+            case WHITE -> from ==
+            case BLACK -> from ==
+            default -> false;
+        };
+    }
+
+    private static boolean isKingLongCastleMove(Square from, Square to, Color c) {
+        return false;
+    }
+
     public static MoveType determinePawnMoveType(Square from, Square to, int direction) {
         if (isPawnSingleForward(from, to, direction)) return PAWN_SINGLE_FORWARD;
         else if (isPawnDoubleForward(from, to, direction)) return PAWN_DOUBLE_FORWARD;
         else if (isPawnDiagonalCapture(from, to, direction)) return PAWN_CAPTURE;
 
         return null;
-    }
-
-    public static boolean isKnightMove(Square from, Square to) {
-        int xDiff = Math.abs(from.getX() - to.getX());
-        int yDiff = Math.abs(from.getY() - to.getY());
-
-        return (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
     }
 
     public static boolean isPawnMove(Square from, Square to, int direction) {

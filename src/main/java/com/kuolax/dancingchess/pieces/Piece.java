@@ -21,6 +21,8 @@ public class Piece {
 
     private Piece dancePartner;
 
+    private boolean hasMoved;
+
     private boolean isInUnion;
 
     public void resetDancePartner() {
@@ -35,14 +37,7 @@ public class Piece {
         List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
 
         return allLegalMoves.stream()
-                .filter(to -> !wouldLeaveKingInCheck(from, to, board))
+                .filter(to -> !board.wouldMoveLeaveKingInCheck(from, to, this))
                 .toList();
-    }
-
-    private boolean wouldLeaveKingInCheck(Square from, Square to, Board board) {
-        board.simulateMove(from, to);
-        boolean isKingInCheck = board.isKingInCheck(getColor());
-        board.simulateMove(to, from);
-        return isKingInCheck;
     }
 }
