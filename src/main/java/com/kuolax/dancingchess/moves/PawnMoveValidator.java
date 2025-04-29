@@ -9,19 +9,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_CAPTURE;
-import static com.kuolax.dancingchess.moves.MoveType.PAWN_FORWARD;
-import static com.kuolax.dancingchess.pieces.Color.BLACK;
+import static com.kuolax.dancingchess.moves.MoveType.PAWN_DOUBLE_FORWARD;
+import static com.kuolax.dancingchess.moves.MoveType.PAWN_SINGLE_FORWARD;
+import static com.kuolax.dancingchess.moves.MoveType.isPawnMove;
 import static com.kuolax.dancingchess.pieces.Color.WHITE;
 
 public class PawnMoveValidator extends AbstractMoveValidator {
 
-    private static int getPawnMoveDirection(Color color) {
-        return (color == WHITE) ? 1 : -1;
+    private static int getPawnMoveDirection(Color pawnColor) {
+        return pawnColor == WHITE ? 1 : -1;
     }
 
     @Override
     protected List<MoveType> getLegalMoveTypes() {
-        return List.of(PAWN_FORWARD, PAWN_CAPTURE);
+        return List.of(PAWN_SINGLE_FORWARD, PAWN_DOUBLE_FORWARD, PAWN_CAPTURE);
     }
 
     @Override
@@ -36,43 +37,23 @@ public class PawnMoveValidator extends AbstractMoveValidator {
     @Override
     public boolean isLegalMove(Piece pawn, Square from, Square to, Board board) {
         Color color = pawn.getColor();
+        int direction = getPawnMoveDirection(color);
 
-        int moveDirection = getPawnMoveDirection(color);
+        MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, direction);
+        if (pawnMoveType == null) return false;
 
-        if (isForwardMove(from, to, moveDirection, 1)) return board.getPieceAt(to) == null;
-
-        if (isPawnOnFirstOrSecondRow(from, color) && isForwardMove(from, to, moveDirection, 2)) {
-            Square between = Square.getByCoordinates(from.getX(), from.getY() + moveDirection);
-            return board.getPieceAt(between) == null && board.getPieceAt(to) == null;
-        }
-
-        if (isDiagonalPawnMove(from, to, moveDirection)) {
-            Piece targetFigure = board.getPieceAt(to);
-            return (targetFigure != null) && (targetFigure.getColor() != color);
-        }
-
-        return false;
-    }
-
-    private boolean isForwardMove(Square from, Square to, int direction, int steps) {
-        return from.getX() == to.getX() &&
-                to.getY() == from.getY() + (direction * steps);
-    }
-
-    private boolean isPawnOnFirstOrSecondRow(Square from, Color c) {
-        // row 1,2 (white) and 7,8 (black) allow 2 square moves for pawn
-        return (c == WHITE && from.getY() <= 2) || (c == BLACK && from.getY() >= 6);
-    }
-
-    private boolean isDiagonalPawnMove(Square from, Square to, int direction) {
-        return from.getXDiff(to) == 1 &&
-                to.getY() == from.getY() + direction &&
-                from.isDiagonalTo(to);
-    }
-
-    private boolean isPawnMove(Square from, Square to, int moveDirection) {
-        return isForwardMove(from, to, moveDirection, 1)
-                || isForwardMove(from, to, moveDirection, 2)
-                || isDiagonalPawnMove(from, to, moveDirection);
+        return switch (pawnMoveType) {
+            case PAWN_SINGLE_FORWARD -> board.getPieceAt(to) == null;
+            case PAWN_DOUBLE_FORWARD -> {
+                Square between = Square.getByCoordinates(from.getX(), from.getY() + direction);
+                yield board.getPieceAt(between) == null && board.getPieceAt(to) == null;
+            }
+            case PAWN_CAPTURE -> {
+                Piece targetPiece = board.getPieceAt(to);
+                yield (targetPiece != null) && (targetPiece.getColor() != color);
+                // todo and not in union
+            }
+            default -> false;
+        };
     }
 }
