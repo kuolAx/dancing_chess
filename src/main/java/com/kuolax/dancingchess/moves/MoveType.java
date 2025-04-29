@@ -7,8 +7,10 @@ public enum MoveType {
     VERTICAL,
     DIAGONAL,
     KNIGHT_MOVE,
-    PAWN_MOVE,
-    CASTLE;
+    PAWN_FORWARD,
+    PAWN_CAPTURE,
+    CASTLE_LONG,
+    CASTLE_SHORT;
 
     public static MoveType determineMoveType(Square from, Square to) {
         if (from.isHorizontalTo(to)) return HORIZONTAL;
