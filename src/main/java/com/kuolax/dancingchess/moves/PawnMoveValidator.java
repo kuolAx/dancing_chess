@@ -16,7 +16,7 @@ import static com.kuolax.dancingchess.pieces.Color.WHITE;
 
 public class PawnMoveValidator extends AbstractMoveValidator {
 
-    private static int getPawnMoveDirection(Color pawnColor) {
+    public static int getPawnMoveDirection(Color pawnColor) {
         return pawnColor == WHITE ? 1 : -1;
     }
 
