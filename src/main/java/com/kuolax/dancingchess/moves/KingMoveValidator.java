@@ -37,7 +37,6 @@ public class KingMoveValidator extends AbstractMoveValidator {
     @Override
     protected List<Square> getPotentialTargetSquares(Square from, Board board) {
         Color c = board.getPieceAt(from).getColor();
-
         return Arrays.stream(Square.values())
                 .filter(to -> isKingMove(from, to, c))
                 .toList();
@@ -52,29 +51,21 @@ public class KingMoveValidator extends AbstractMoveValidator {
         return switch (kingMoveType) {
             case KING_MOVE -> {
                 if (board.getPieceAt(to) != null) yield false; // king can't take/create union
-                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
-                yield true;
+                yield !board.wouldMovePutKingInCheck(from, to, king);
             }
-            case KING_CASTLE_SHORT -> {
-                if (king.isMoved()) yield false;
-                if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_SHORT)) yield false;
-                if (isCastlingPathBlocked(KING_CASTLE_SHORT, kingColor, board)) yield false;
-                if (board.isCheck(kingColor)) yield false;
-                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
-                if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_SHORT)) yield false;
-                yield true;
-            }
-            case KING_CASTLE_LONG -> {
-                if (king.isMoved()) yield false;
-                if (hasRookMovedBeforeCastling(board, kingColor, KING_CASTLE_LONG)) yield false;
-                if (isCastlingPathBlocked(KING_CASTLE_LONG, kingColor, board)) yield false;
-                if (board.isCheck(kingColor)) yield false;
-                if (board.wouldMovePutKingInCheck(from, to, king)) yield false;
-                if (castlingSquaresAreAttacked(board, kingColor, KING_CASTLE_LONG)) yield false;
-                yield true;
-            }
+            case KING_CASTLE_SHORT -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_SHORT);
+            case KING_CASTLE_LONG -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_LONG);
             default -> false;
         };
+    }
+
+    private boolean isCastlingConditionsMet(Piece king, Square from, Square to, Board board, Color kingColor, MoveType moveType) {
+        if (king.isMoved()) return false;
+        if (hasRookMovedBeforeCastling(board, kingColor, moveType)) return false;
+        if (isCastlingPathBlocked(moveType, kingColor, board)) return false;
+        if (board.isCheck(kingColor)) return false;
+        if (board.wouldMovePutKingInCheck(from, to, king)) return false;
+        return !castlingSquaresAreAttacked(board, kingColor, moveType);
     }
 
     private boolean hasRookMovedBeforeCastling(Board board, Color color, MoveType moveType) {
