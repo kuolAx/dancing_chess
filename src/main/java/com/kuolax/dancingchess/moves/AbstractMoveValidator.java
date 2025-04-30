@@ -19,7 +19,8 @@ public abstract class AbstractMoveValidator implements MoveValidator {
     public boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
         MoveType moveType = determineStandardMoveType(from, to);
 
-        return getLegalMoveTypes().contains(moveType)
+        return moveType != null
+                && getLegalMoveTypes().contains(moveType)
                 && isPathClear(from, to, moveType, board)
                 && isEmptySquareOrCanTakeOnTargetSquare(piece, to, board);
     }

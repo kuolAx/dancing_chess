@@ -7,20 +7,21 @@ import com.almasb.fxgl.entity.Entity;
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.input.MouseEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
+import static com.kuolax.dancingchess.board.Square.STANDARD_SQUARE_SIZE;
 import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
 import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
 import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
 
 public class DancingChessApplication extends GameApplication {
+    private final ChessEntityFactory entityFactory = new ChessEntityFactory();
     private GameController gameController;
     private Piece selectedPiece;
     private Square selectedSquare;
@@ -40,19 +41,14 @@ public class DancingChessApplication extends GameApplication {
     @Override
     protected void initGame() {
         gameController = new GameController();
-        int squareSize = 85;
 
         Arrays.stream(Square.values())
-                .forEach(s -> FXGL.entityBuilder()
-                        .type(EntityType.PIECE)
-                        .at((s.getX() * squareSize), (s.getY() * squareSize))
-                        .view(new Rectangle(squareSize, squareSize, s.getSquareColor()))
-                        .buildAndAttach());
+                .forEach(s -> getGameWorld().addEntity(entityFactory.spawnSquare(s)));
 
-        updateBoardView();
+        updateBoard();
     }
 
-    private void updateBoardView() {
+    private void updateBoard() {
         getGameWorld().getEntitiesByType(EntityType.PIECE).forEach(Entity::removeFromWorld);
 
         Board board = gameController.getBoard();
@@ -60,35 +56,26 @@ public class DancingChessApplication extends GameApplication {
         Arrays.stream(Square.values())
                 .filter(s -> board.getPieceAt(s) != null)
                 .forEach(s -> {
-                    Entity pieceEntity = EntityFactory.createPiece(board.getPieceAt(s));
+                    Entity pieceEntity = entityFactory.spawnPiece(board.getPieceAt(s), s);
                     getGameWorld().addEntity(pieceEntity);
                 });
     }
 
     @Override
     protected void initInput() {
-        onMousePressed(MouseButton.PRIMARY, event -> {
-            int x = (int) (event.getX() / 64);
-            int y = 7 - (int) (event.getY() / 64);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseClick);
+    }
 
-            Square clickedSquare = Square.getByCoordinates(x, y);
-            Piece clickedPiece = gameController.getBoard().getPieceAt(clickedSquare);
+    private void handleMouseClick(MouseEvent event) {
+        int boardX = (int) (event.getX() / STANDARD_SQUARE_SIZE);
+        int boardY = (int) (event.getY() / STANDARD_SQUARE_SIZE);
 
-            if (selectedPiece == null
-                    && clickedPiece != null
-                    && clickedPiece.getColor() == gameController.getCurrentPlayer()) {
+        Square clickedSquare = Square.getByCoordinates(boardX, boardY);
+        if (clickedSquare != null) {
+            processSquareClick(clickedSquare);
+        }
 
-                selectedSquare = clickedSquare;
-                selectedPiece = getGameWorld().getEntitiesAt(event.getPosition())
-                        .stream()
-                        .filter(e -> e.getType() == EntityType.PIECE)
-                        .findFirst()
-                        .orElse(null);
-
-                if (selectedPiece != null) {
-                    List<Square> legalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
-                    highlightLegalMoves(legalMoves);
-                }
+        /*
             } else if (selectedPiece != null) {
                 boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
 
@@ -109,11 +96,43 @@ public class DancingChessApplication extends GameApplication {
                 clearHighlights();
             }
         });
+         */
+    }
+
+    private void processSquareClick(Square clickedSquare) {
+        System.out.println("Clicked on: " + clickedSquare);
+
+        Piece clickedPiece = gameController.getBoard().getPieceAt(clickedSquare);
+
+        // first click -> pick piece and highlight possible moves
+        if (selectedSquare == null
+                && clickedPiece != null
+                && clickedPiece.getColor() == gameController.getCurrentPlayer()) {
+            selectedSquare = clickedSquare;
+            selectedPiece = clickedPiece;
+
+            List<Square> legalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
+            highlightLegalMoves(legalMoves);
+        } else {
+            // second click - move selected piece
+            boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
+
+            if (moveSuccessful) {
+                updateBoard();
+                if (gameController.isGameOver()) showGameOverDialog();
+                if (gameController.canPromote(selectedPiece, clickedSquare)) showPromotionDialog(clickedSquare);
+            }
+
+            // reset selection
+            clearHighlights();
+            selectedSquare = null;
+            selectedPiece = null;
+        }
     }
 
     private void highlightLegalMoves(List<Square> squares) {
         squares.parallelStream()
-                .forEach(s -> getGameWorld().addEntity(EntityFactory.createHighlight(s)));
+                .forEach(s -> getGameWorld().addEntity(entityFactory.spawnHighlight(s)));
     }
 
     private void clearHighlights() {
@@ -133,7 +152,7 @@ public class DancingChessApplication extends GameApplication {
 
         getDialogService().showMessageBox(message, () -> {
             gameController.resetGame();
-            updateBoardView();
+            updateBoard();
         });
     }
 
@@ -143,7 +162,7 @@ public class DancingChessApplication extends GameApplication {
                 pieceType -> {
                     Piece pawn = gameController.getBoard().getPieceAt(position);
                     gameController.getBoard().promotePawn(pawn, pieceType, position);
-                    updateBoardView();
+                    updateBoard();
                 },
                 QUEEN, KNIGHT, BISHOP, ROOK);
     }
