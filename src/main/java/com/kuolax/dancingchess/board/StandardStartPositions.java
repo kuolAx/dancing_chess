@@ -1,6 +1,6 @@
 package com.kuolax.dancingchess.board;
 
-import com.kuolax.dancingchess.pieces.Color;
+import com.kuolax.dancingchess.pieces.PieceColor;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ import static com.kuolax.dancingchess.board.Square.H5;
 import static com.kuolax.dancingchess.board.Square.H6;
 import static com.kuolax.dancingchess.board.Square.H7;
 import static com.kuolax.dancingchess.board.Square.H8;
-import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 
 public class StandardStartPositions {
     public static final StartPositionsProvider KING = c -> List.of(isWhite(c) ? A5 : H5);
@@ -55,7 +55,7 @@ public class StandardStartPositions {
     private StandardStartPositions() {
     }
 
-    private static boolean isWhite(Color c) {
+    private static boolean isWhite(PieceColor c) {
         return c == WHITE;
     }
 }

@@ -1,9 +1,9 @@
 package com.kuolax.dancingchess.board;
 
-import com.kuolax.dancingchess.pieces.Color;
+import com.kuolax.dancingchess.pieces.PieceColor;
 
 import java.util.List;
 
 public interface StartPositionsProvider {
-    List<Square> getStartSquaresForPiece(Color color);
+    List<Square> getStartSquaresForPiece(PieceColor color);
 }

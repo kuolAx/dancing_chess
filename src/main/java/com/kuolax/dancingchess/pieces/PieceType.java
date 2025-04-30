@@ -38,7 +38,7 @@ public enum PieceType {
         this.moveValidator = moveValidator;
     }
 
-    public List<Square> getStartingSquares(Color color) {
+    public List<Square> getStartingSquares(PieceColor color) {
         return startPositionsProvider.getStartSquaresForPiece(color);
     }
 }

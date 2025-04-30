@@ -1,8 +1,8 @@
 package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 
 import static com.kuolax.dancingchess.board.Square.C1;
 import static com.kuolax.dancingchess.board.Square.C8;
@@ -49,13 +49,13 @@ public enum MoveType {
         return (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
     }
 
-    public static boolean isKingMove(Square from, Square to, Color c) {
+    public static boolean isKingMove(Square from, Square to, PieceColor c) {
         return isNormalKingMove(from, to)
                 || isKingShortCastleMove(from, to, c)
                 || isKingLongCastleMove(from, to, c);
     }
 
-    public static MoveType determineKingMoveType(Square from, Square to, Color c) {
+    public static MoveType determineKingMoveType(Square from, Square to, PieceColor c) {
         if (isNormalKingMove(from, to)) return KING_MOVE;
         else if (isKingShortCastleMove(from, to, c)) return KING_CASTLE_SHORT;
         else if (isKingLongCastleMove(from, to, c)) return KING_CASTLE_LONG;
@@ -69,14 +69,14 @@ public enum MoveType {
         return xDiff <= 1 && yDiff <= 1;
     }
 
-    private static boolean isKingShortCastleMove(Square from, Square to, Color c) {
+    private static boolean isKingShortCastleMove(Square from, Square to, PieceColor c) {
         return switch (c) {
             case WHITE -> from == E1 && to == G1;
             case BLACK -> from == E8 && to == G8;
         };
     }
 
-    private static boolean isKingLongCastleMove(Square from, Square to, Color c) {
+    private static boolean isKingLongCastleMove(Square from, Square to, PieceColor c) {
         return switch (c) {
             case WHITE -> from == E1 && to == C1;
             case BLACK -> from == E8 && to == C8;
