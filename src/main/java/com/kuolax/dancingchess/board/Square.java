@@ -1,6 +1,11 @@
 package com.kuolax.dancingchess.board;
 
+import com.kuolax.dancingchess.pieces.Color;
 import lombok.Getter;
+
+import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static javafx.scene.paint.Color.BEIGE;
+import static javafx.scene.paint.Color.SADDLEBROWN;
 
 @Getter
 public enum Square {
@@ -15,10 +20,12 @@ public enum Square {
 
     private final int x;
     private final int y;
+    private final javafx.scene.paint.Color squareColor;
 
     Square(int x, int y) {
         this.x = x;
         this.y = y;
+        squareColor = determineSquareColor(x, y);
     }
 
     public static Square getByCoordinates(int x, int y) {
@@ -51,5 +58,14 @@ public enum Square {
 
     public int getYDiff(Square square) {
         return Math.abs(y - square.y);
+    }
+
+    public boolean isOnLastRow(Color playerColor) {
+        return playerColor == WHITE ? y == 8 : y == 1;
+    }
+
+    private javafx.scene.paint.Color determineSquareColor(int x, int y) {
+        boolean isLightSquare = (x + y) % 2 == 0;
+        return isLightSquare ? BEIGE : SADDLEBROWN;
     }
 }
