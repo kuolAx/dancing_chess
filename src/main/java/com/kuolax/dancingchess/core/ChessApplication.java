@@ -20,7 +20,7 @@ import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
 import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
 
-public class DancingChessApplication extends GameApplication {
+public class ChessApplication extends GameApplication {
     private final ChessEntityFactory entityFactory = new ChessEntityFactory();
     private GameController gameController;
     private Piece selectedPiece;
