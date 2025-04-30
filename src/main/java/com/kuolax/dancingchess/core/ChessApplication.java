@@ -41,9 +41,10 @@ public class ChessApplication extends GameApplication {
     @Override
     protected void initGame() {
         gameController = new GameController();
+        getGameWorld().addEntityFactory(entityFactory);
 
         Arrays.stream(Square.values())
-                .forEach(s -> getGameWorld().addEntity(entityFactory.spawnSquare(s)));
+                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnSquare(at)));
 
         updateBoard();
     }
@@ -74,29 +75,6 @@ public class ChessApplication extends GameApplication {
         if (clickedSquare != null) {
             processSquareClick(clickedSquare);
         }
-
-        /*
-            } else if (selectedPiece != null) {
-                boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
-
-                if (moveSuccessful) {
-                    updateBoardView();
-
-                    if (gameController.isGameOver()) {
-                        showGameOverDialog();
-                    }
-
-                    if (gameController.canPromote(selectedPiece, clickedSquare)) {
-                        showPromotionDialog(clickedSquare);
-                    }
-                }
-
-                selectedPiece = null;
-                selectedSquare = null;
-                clearHighlights();
-            }
-        });
-         */
     }
 
     private void processSquareClick(Square clickedSquare) {
@@ -110,9 +88,10 @@ public class ChessApplication extends GameApplication {
                 && clickedPiece.getColor() == gameController.getCurrentPlayer()) {
             selectedSquare = clickedSquare;
             selectedPiece = clickedPiece;
+            System.out.println("Selected " + clickedPiece.getId() + "on " + clickedSquare);
 
             List<Square> legalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
-            highlightLegalMoves(legalMoves);
+            if (!legalMoves.isEmpty()) highlightSquares(legalMoves);
         } else {
             // second click - move selected piece
             boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
@@ -130,9 +109,8 @@ public class ChessApplication extends GameApplication {
         }
     }
 
-    private void highlightLegalMoves(List<Square> squares) {
-        squares.parallelStream()
-                .forEach(s -> getGameWorld().addEntity(entityFactory.spawnHighlight(s)));
+    private void highlightSquares(List<Square> squares) {
+        squares.forEach(at -> getGameWorld().addEntity(entityFactory.spawnHighlight(at)));
     }
 
     private void clearHighlights() {
