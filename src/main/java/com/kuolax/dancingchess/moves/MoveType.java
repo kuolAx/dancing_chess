@@ -99,15 +99,15 @@ public enum MoveType {
 
     private static boolean isPawnSingleForward(Square from, Square to, int direction) {
         return from.isVerticalTo(to) &&
-                to.getX() == (from.getX() + direction);
+                to.getY() == (from.getY() + direction);
     }
 
     private static boolean isPawnDoubleForward(Square from, Square to, int direction) {
-        boolean isFirstOrSecondRank = (direction == 1 && from.getX() <= 2) || (direction == -1 && from.getX() >= 6);
+        boolean isFirstOrSecondRank = (direction == 1 && from.getY() <= 2) || (direction == -1 && from.getY() >= 6);
 
         return isFirstOrSecondRank
-                && to.getX() == from.getX() + (direction * 2)
-                && from.isVerticalTo(to);
+                && from.isVerticalTo(to)
+                && to.getY() == from.getY() + (direction * 2);
     }
 
     private static boolean isPawnDiagonalCapture(Square from, Square to, int direction) {
