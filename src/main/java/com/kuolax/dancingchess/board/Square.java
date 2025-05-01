@@ -3,6 +3,8 @@ package com.kuolax.dancingchess.board;
 import com.kuolax.dancingchess.pieces.PieceColor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 import static javafx.scene.paint.Color.BEIGE;
 import static javafx.scene.paint.Color.SADDLEBROWN;
@@ -30,12 +32,10 @@ public enum Square {
     }
 
     public static Square getByCoordinates(int x, int y) {
-        for (Square square : values()) {
-            if (square.x == x && square.y == y) {
-                return square;
-            }
-        }
-        return null;
+        return Arrays.stream(Square.values()).parallel()
+                .filter(s -> s.x == x && s.y == y)
+                .findAny()
+                .orElse(null);
     }
 
     public boolean isDiagonalTo(Square target) {
