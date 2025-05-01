@@ -112,10 +112,17 @@ public class Board {
                 .anyMatch(piece -> piece.canTakeOn(piece.getPosition(), target, this));
     }
 
-    public boolean wouldMovePutKingInCheck(Square from, Square to, Piece piece) {
-        simulateMove(from, to);
+    public boolean movePutsKingInCheck(Square from, Square to) {
+        Piece piece = pieces.put(from, null);
+        if (piece == null) return false;
+        
+        Piece cashedPiece = pieces.put(to, piece);
+
         boolean isKingInCheck = isCheck(piece.getColor());
-        simulateMove(to, from);
+
+        pieces.put(to, cashedPiece);
+        pieces.put(from, piece);
+
         return isKingInCheck;
     }
 
@@ -148,13 +155,6 @@ public class Board {
         if (piece.getType() != KING) return false;
         return (E1 == from && (C1 == to || G1 == to))
                 || (E8 == from && (C8 == to || G8 == to));
-    }
-
-    private void simulateMove(Square from, Square to) {
-        // todo cash piece on target move ->  movesimulator klasse erstellen
-        Piece piece = pieces.put(from, null);
-        if (piece == null) return;
-        pieces.put(to, piece);
     }
 
     private boolean moveRookForCastling(Square to, Piece piece) {

@@ -51,7 +51,7 @@ public class KingMoveValidator extends AbstractMoveValidator {
         return switch (kingMoveType) {
             case KING_MOVE -> {
                 if (board.getPieceAt(to) != null) yield false; // king can't take/create union
-                yield !board.wouldMovePutKingInCheck(from, to, king);
+                yield !board.movePutsKingInCheck(from, to);
             }
             case KING_CASTLE_SHORT -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_SHORT);
             case KING_CASTLE_LONG -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_LONG);
@@ -64,7 +64,7 @@ public class KingMoveValidator extends AbstractMoveValidator {
         if (hasRookMovedBeforeCastling(board, kingColor, moveType)) return false;
         if (isCastlingPathBlocked(moveType, kingColor, board)) return false;
         if (board.isCheck(kingColor)) return false;
-        if (board.wouldMovePutKingInCheck(from, to, king)) return false;
+        if (board.movePutsKingInCheck(from, to)) return false;
         return !castlingSquaresAreAttacked(board, kingColor, moveType);
     }
 
@@ -73,22 +73,22 @@ public class KingMoveValidator extends AbstractMoveValidator {
             return switch (color) {
                 case WHITE -> {
                     Piece pieceAtH1 = board.getPieceAt(H1);
-                    yield pieceAtH1 != null && !pieceAtH1.isMoved();
+                    yield pieceAtH1 == null || !pieceAtH1.isMoved();
                 }
                 case BLACK -> {
                     Piece pieceAtH8 = board.getPieceAt(H8);
-                    yield pieceAtH8 != null && !pieceAtH8.isMoved();
+                    yield pieceAtH8 == null || !pieceAtH8.isMoved();
                 }
             };
         } else if (moveType == KING_CASTLE_LONG) {
             return switch (color) {
                 case WHITE -> {
                     Piece pieceAtA1 = board.getPieceAt(A1);
-                    yield pieceAtA1 != null && !pieceAtA1.isMoved();
+                    yield pieceAtA1 == null || !pieceAtA1.isMoved();
                 }
                 case BLACK -> {
                     Piece pieceAtA8 = board.getPieceAt(A8);
-                    yield pieceAtA8 != null && !pieceAtA8.isMoved();
+                    yield pieceAtA8 == null || !pieceAtA8.isMoved();
                 }
             };
         }
