@@ -151,6 +151,7 @@ public class Board {
     }
 
     private void simulateMove(Square from, Square to) {
+        // todo cash piece on target move ->  movesimulator klasse erstellen
         Piece piece = pieces.put(from, null);
         if (piece == null) return;
         pieces.put(to, piece);

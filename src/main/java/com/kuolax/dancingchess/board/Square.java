@@ -66,12 +66,12 @@ public enum Square {
     }
 
     public double getSpawnX() {
-        return x * STANDARD_SQUARE_SIZE + STANDARD_SQUARE_SIZE / 2;
+        return x * STANDARD_SQUARE_SIZE;
     }
 
     public double getSpawnY() {
         // invert y-axis due to fxgl axis starting with 0,0 in the upper left corner
-        return (8 - y) * STANDARD_SQUARE_SIZE + STANDARD_SQUARE_SIZE / 2;
+        return (8 - y) * STANDARD_SQUARE_SIZE;
     }
 
     private javafx.scene.paint.Color determineSquareColor(int x, int y) {
