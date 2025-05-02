@@ -8,20 +8,27 @@ import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
-import static com.kuolax.dancingchess.board.Square.STANDARD_SQUARE_SIZE;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
+import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
+import static com.kuolax.dancingchess.board.Square.getSquareByMousePosition;
 import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
 import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
 import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
 
 public class ChessApplication extends GameApplication {
+    private static final int BOARD_X_OFFSET = 0;
+    private static final int BOARD_Y_OFFSET = 0;
     private final ChessEntityFactory entityFactory = new ChessEntityFactory();
     private GameController gameController;
     private Piece selectedPiece;
@@ -35,7 +42,7 @@ public class ChessApplication extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
-        settings.setHeight(700);
+        settings.setHeight(600);
         settings.setTitle("Dancing Chess (Chess with additional steps)");
         settings.setVersion("1.0");
 
@@ -54,6 +61,7 @@ public class ChessApplication extends GameApplication {
                 });
 
         updateBoard();
+        setupMousePositionTracker();
     }
 
     private void updateBoard() {
@@ -74,11 +82,8 @@ public class ChessApplication extends GameApplication {
         FXGL.getInput().addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseClick);
     }
 
-    private void handleMouseClick(MouseEvent event) {
-        int boardX = (int) (event.getX() / STANDARD_SQUARE_SIZE);
-        int boardY = 8 - (int) (event.getY() / STANDARD_SQUARE_SIZE);
-
-        Square clickedSquare = Square.getByCoordinates(boardX, boardY);
+    private void handleMouseClick(MouseEvent mouseEvent) {
+        Square clickedSquare = Square.getSquareByMousePosition(mouseEvent);
         if (clickedSquare != null) {
             processSquareClick(clickedSquare);
         }
@@ -97,8 +102,8 @@ public class ChessApplication extends GameApplication {
             selectedPiece = clickedPiece;
             System.out.println("Selected " + clickedPiece.getId() + "on " + clickedSquare);
 
-            List<Square> legalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
-            if (!legalMoves.isEmpty()) highlightSquares(legalMoves);
+            selectedPieceLegalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
+            if (!selectedPieceLegalMoves.isEmpty()) highlightSquares(selectedPieceLegalMoves);
         } else {
             // second click - move selected piece
             boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
@@ -150,5 +155,32 @@ public class ChessApplication extends GameApplication {
                     updateBoard();
                 },
                 QUEEN, KNIGHT, BISHOP, ROOK);
+    }
+
+    private void setupMousePositionTracker() {
+        Text mousePositionText = new Text();
+        mousePositionText.setTranslateX(8 * SQUARE_SIZE + 20);
+        mousePositionText.setTranslateY(30);
+
+        Rectangle background = new Rectangle(150, 70, Color.color(0, 0, 0, 0.3));
+        background.setTranslateX(8 * SQUARE_SIZE + 10);
+        background.setTranslateY(5);
+
+        getGameScene().addUINode(background);
+        getGameScene().addUINode(mousePositionText);
+
+        getInput().addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+
+            Square square = getSquareByMousePosition(event);
+
+            mousePositionText.setText(String.format(
+                    "Mouse: (%.1f, %.1f)%nSquare: %s%nOffset: (X=%d, Y=%d)",
+                    mouseX, mouseY,
+                    (square != null) ? square.toString() : "None",
+                    BOARD_X_OFFSET, BOARD_Y_OFFSET
+            ));
+        });
     }
 }

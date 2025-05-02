@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import static com.kuolax.dancingchess.board.Square.STANDARD_SQUARE_SIZE;
+import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 
 public class ChessEntityFactory implements EntityFactory {
 
@@ -20,7 +20,7 @@ public class ChessEntityFactory implements EntityFactory {
     public Entity spawnSquare(Square square) {
         return FXGL.entityBuilder()
                 .type(EntityType.SQUARE)
-                .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE, STANDARD_SQUARE_SIZE, square.getSquareColor()))
+                .viewWithBBox(new Rectangle(SQUARE_SIZE, SQUARE_SIZE, square.getSquareColor()))
                 .zIndex(0)
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
@@ -33,8 +33,8 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(EntityType.PIECE)
                 .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
-                .at(at.getSpawnX() + 6, at.getSpawnY() + 70)
-                .scale(6, 6)
+                .at(at.getSpawnX() + 6, at.getSpawnY() + SQUARE_SIZE - 10)
+                .scale(SQUARE_SIZE / 14.16, SQUARE_SIZE / 14.16)
                 .zIndex(1)
                 .anchorFromCenter()
                 .build();
@@ -42,10 +42,10 @@ public class ChessEntityFactory implements EntityFactory {
 
     @Spawns("highlight")
     public Entity spawnHighlight(Square at) {
-        Circle highlight = new Circle(STANDARD_SQUARE_SIZE / 3);
+        Circle highlight = new Circle(SQUARE_SIZE / 3);
         highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.4));
-        highlight.setCenterX(STANDARD_SQUARE_SIZE / 2);
-        highlight.setCenterY(STANDARD_SQUARE_SIZE / 2);
+        highlight.setCenterX(SQUARE_SIZE / 2);
+        highlight.setCenterY(SQUARE_SIZE / 2);
 
         return FXGL.entityBuilder()
                 .type(EntityType.HIGHLIGHT)
@@ -62,7 +62,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .type(EntityType.TEXT)
                 .view(new Text(square.toString()))
                 .zIndex(0)
-                .at(square.getSpawnX() + 5, square.getSpawnY() + 80)
+                .at(square.getSpawnX() + 5, square.getSpawnY() + SQUARE_SIZE - 5)
                 .opacity(0.3)
                 .anchorFromCenter()
                 .build();
