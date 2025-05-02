@@ -36,8 +36,8 @@ public class PawnMoveValidator extends AbstractMoveValidator {
 
     @Override
     public boolean isLegalMove(Piece pawn, Square from, Square to, Board board) {
-        PieceColor color = pawn.getColor();
-        int direction = getPawnMoveDirection(color);
+        PieceColor playerColor = pawn.getColor();
+        int direction = getPawnMoveDirection(playerColor);
 
         MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, direction);
         if (pawnMoveType == null) return false;
@@ -50,8 +50,9 @@ public class PawnMoveValidator extends AbstractMoveValidator {
             }
             case PAWN_CAPTURE -> {
                 Piece targetPiece = board.getPieceAt(to);
-                yield (targetPiece != null) && (targetPiece.getColor() != color);
-                // todo and not in union
+                yield (targetPiece != null)
+                        && !pawn.isInUnion()
+                        && (targetPiece.getColor() != playerColor);
             }
             default -> false;
         };

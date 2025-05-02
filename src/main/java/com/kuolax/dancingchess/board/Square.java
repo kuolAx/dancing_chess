@@ -32,7 +32,7 @@ public enum Square {
     }
 
     public static Square getByCoordinates(int x, int y) {
-        return Arrays.stream(Square.values()).parallel()
+        return Arrays.stream(Square.values())
                 .filter(s -> s.x == x && s.y == y)
                 .findAny()
                 .orElse(null);
