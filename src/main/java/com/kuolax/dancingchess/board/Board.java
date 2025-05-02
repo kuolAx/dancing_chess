@@ -120,11 +120,13 @@ public class Board {
         if (piece == null) return false;
 
         Piece cashedPiece = pieces.put(to, piece);
+        piece.setPosition(to);
 
         boolean isKingInCheck = isCheck(piece.getColor());
 
         pieces.put(to, cashedPiece);
         pieces.put(from, piece);
+        piece.setPosition(from);
 
         return isKingInCheck;
     }
