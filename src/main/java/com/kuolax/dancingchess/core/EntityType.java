@@ -4,6 +4,8 @@ public enum EntityType {
     BOARD,
     SQUARE,
     PIECE,
-    HIGHLIGHT,
+    LEGAL_MOVE_HIGHLIGHT,
+    SELECTED_PIECE_HIGHLIGHT,
+    LAST_MOVE_HIGHLIGHT,
     TEXT
 }

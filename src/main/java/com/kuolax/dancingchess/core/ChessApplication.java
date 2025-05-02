@@ -105,12 +105,16 @@ public class ChessApplication extends GameApplication {
             getGameWorld().addEntity(entityFactory.spawnSelectedPieceHighlight(selectedPiece.getPosition()));
 
             selectedPieceLegalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
-            if (!selectedPieceLegalMoves.isEmpty()) spawnLegalMoveHighlights(selectedPieceLegalMoves);
+            if (!selectedPieceLegalMoves.isEmpty()) {
+                selectedPieceLegalMoves.forEach(at -> getGameWorld().addEntity(entityFactory.spawnHighlight(at)));
+            }
         } else {
             // second click - move selected piece
             boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
 
             if (moveSuccessful) {
+                refreshLastMoveHighlights(clickedSquare);
+
                 updateBoard();
                 if (gameController.isGameOver()) showGameOverDialog();
                 if (gameController.canPromote(selectedPiece, clickedSquare)) showPromotionDialog(clickedSquare);
@@ -123,12 +127,16 @@ public class ChessApplication extends GameApplication {
         }
     }
 
-    private void spawnLegalMoveHighlights(List<Square> squares) {
-        squares.forEach(at -> getGameWorld().addEntity(entityFactory.spawnHighlight(at)));
+    private void refreshLastMoveHighlights(Square clickedSquare) {
+        getGameWorld().getEntitiesByType(EntityType.LAST_MOVE_HIGHLIGHT).forEach(Entity::removeFromWorld);
+        getGameWorld().addEntity(entityFactory.spawnLastMoveHighlight(selectedSquare));
+        getGameWorld().addEntity(entityFactory.spawnLastMoveHighlight(clickedSquare));
     }
 
     private void clearHighlights() {
-        getGameWorld().getEntitiesByType(EntityType.HIGHLIGHT).forEach(Entity::removeFromWorld);
+        getGameWorld()
+                .getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT, EntityType.SELECTED_PIECE_HIGHLIGHT)
+                .forEach(Entity::removeFromWorld);
     }
 
     private void showGameOverDialog() {
