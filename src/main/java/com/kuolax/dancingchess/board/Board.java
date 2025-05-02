@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.kuolax.dancingchess.board.Square.A1;
 import static com.kuolax.dancingchess.board.Square.A8;
@@ -89,9 +90,9 @@ public class Board {
 
     public List<Piece> getPiecesByColor(PieceColor color) {
         return Arrays.stream(Square.values())
-                .filter(s -> getPieceAt(s) != null)
-                .filter(s -> getPieceAt(s).getColor() == color)
                 .map(this::getPieceAt)
+                .filter(Objects::nonNull)
+                .filter(piece -> piece.getColor() == color)
                 .toList();
     }
 
@@ -101,7 +102,7 @@ public class Board {
                 .map(Piece::getPosition)
                 .findAny()
                 .orElse(null);
-        
+
         return canAnyPieceTakeOn(kingSquare, playerColor);
     }
 

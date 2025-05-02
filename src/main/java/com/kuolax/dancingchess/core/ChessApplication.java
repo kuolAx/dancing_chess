@@ -25,6 +25,7 @@ public class ChessApplication extends GameApplication {
     private GameController gameController;
     private Piece selectedPiece;
     private Square selectedSquare;
+    private List<Square> selectedPieceLegalMoves;
 
     public static void main(String[] args) {
         launch(args);
