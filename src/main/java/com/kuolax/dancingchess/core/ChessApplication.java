@@ -8,6 +8,7 @@ import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,10 @@ public class ChessApplication extends GameApplication {
         getGameWorld().addEntityFactory(entityFactory);
 
         Arrays.stream(Square.values())
-                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnSquare(at)));
+                .forEach(at -> {
+                    getGameWorld().addEntity(entityFactory.spawnSquare(at));
+                    getGameWorld().addEntity(entityFactory.spawnSquareText(at, new Text(at.toString())));
+                });
 
         updateBoard();
     }
