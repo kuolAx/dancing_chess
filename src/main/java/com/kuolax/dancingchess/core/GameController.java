@@ -46,11 +46,9 @@ public class GameController {
         Piece piece = board.getPieceAt(from);
         if (piece == null || piece.getColor() != currentPlayer) return false;
 
-        System.out.println("Trying to move + " + piece.getId() + " from " + from + " to " + to);
         boolean moveSuccessful = board.movePiece(from, to, piece);
 
         if (moveSuccessful) {
-            System.out.println("Moved + " + piece.getId() + "from" + from + " to " + to);
             boolean isCheck = board.isChecked(currentPlayer);
             boolean hasLegalMoves = hasLegalMoves(currentPlayer);
             boolean isCheckMate = isCheck && !hasLegalMoves;
