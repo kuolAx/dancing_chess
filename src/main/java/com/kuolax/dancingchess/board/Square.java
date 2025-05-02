@@ -46,7 +46,7 @@ public enum Square {
         int boardX = (int) (mouseX / SQUARE_SIZE) + 1;
         int boardY = 8 - (int) (mouseY / SQUARE_SIZE);
 
-        if (boardX >= 0 && boardX <= 8 && boardY >= 0 && boardY <= 8) {
+        if (boardX > 0 && boardX <= 8 && boardY > 0 && boardY <= 8) {
             return Square.getByCoordinates(boardX, boardY);
         }
         return null;
@@ -75,7 +75,7 @@ public enum Square {
         return Math.abs(y - square.y);
     }
 
-    public boolean isOnLastRow(PieceColor playerColor) {
+    public boolean isLastRow(PieceColor playerColor) {
         return playerColor == WHITE ? y == 8 : y == 1;
     }
 

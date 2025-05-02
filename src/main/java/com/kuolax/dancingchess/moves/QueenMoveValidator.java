@@ -20,7 +20,7 @@ public class QueenMoveValidator extends AbstractMoveValidator {
     @Override
     protected List<Square> getPotentialTargetSquares(Square from, Board board) {
         return Arrays.stream(Square.values())
-                .filter(to -> from.isDiagonalTo(to) || from.isHorizontalTo(to) || from.isVerticalTo(to))
+                .filter(to -> from.isHorizontalTo(to) || from.isVerticalTo(to) || from.isDiagonalTo(to))
                 .toList();
     }
 }
