@@ -44,7 +44,7 @@ public class Piece {
     }
 
     public boolean hasLegalMoves(Board board) {
-        return getLegalMoves(board).isEmpty();
+        return !getLegalMoves(board).isEmpty();
     }
 
     public void setPosition(Square position) {
