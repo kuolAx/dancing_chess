@@ -50,15 +50,15 @@ public enum MoveType {
     }
 
     public static boolean isKingMove(Square from, Square to, PieceColor c) {
-        return isNormalKingMove(from, to)
-                || isKingShortCastleMove(from, to, c)
-                || isKingLongCastleMove(from, to, c);
+        return isKingShortCastleMove(from, to, c)
+                || isKingLongCastleMove(from, to, c)
+                || isNormalKingMove(from, to);
     }
 
     public static MoveType determineKingMoveType(Square from, Square to, PieceColor c) {
-        if (isNormalKingMove(from, to)) return KING_MOVE;
-        else if (isKingShortCastleMove(from, to, c)) return KING_CASTLE_SHORT;
+        if (isKingShortCastleMove(from, to, c)) return KING_CASTLE_SHORT;
         else if (isKingLongCastleMove(from, to, c)) return KING_CASTLE_LONG;
+        else if (isNormalKingMove(from, to)) return KING_MOVE;
 
         return null;
     }

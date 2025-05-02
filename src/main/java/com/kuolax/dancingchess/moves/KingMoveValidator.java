@@ -73,22 +73,22 @@ public class KingMoveValidator extends AbstractMoveValidator {
             return switch (color) {
                 case WHITE -> {
                     Piece pieceAtH1 = board.getPieceAt(H1);
-                    yield pieceAtH1 == null || !pieceAtH1.isMoved();
+                    yield pieceAtH1 != null && pieceAtH1.isMoved();
                 }
                 case BLACK -> {
                     Piece pieceAtH8 = board.getPieceAt(H8);
-                    yield pieceAtH8 == null || !pieceAtH8.isMoved();
+                    yield pieceAtH8 != null && pieceAtH8.isMoved();
                 }
             };
         } else if (moveType == KING_CASTLE_LONG) {
             return switch (color) {
                 case WHITE -> {
                     Piece pieceAtA1 = board.getPieceAt(A1);
-                    yield pieceAtA1 == null || !pieceAtA1.isMoved();
+                    yield pieceAtA1 != null && pieceAtA1.isMoved();
                 }
                 case BLACK -> {
                     Piece pieceAtA8 = board.getPieceAt(A8);
-                    yield pieceAtA8 == null || !pieceAtA8.isMoved();
+                    yield pieceAtA8 != null && pieceAtA8.isMoved();
                 }
             };
         }
@@ -113,22 +113,22 @@ public class KingMoveValidator extends AbstractMoveValidator {
     private boolean isCastlingPathBlocked(MoveType moveType, PieceColor color, Board board) {
         if (moveType == KING_CASTLE_SHORT) {
             return switch (color) {
-                case WHITE -> isSquaresEmpty(board, F1, G1);
-                case BLACK -> isSquaresEmpty(board, F8, G8);
+                case WHITE -> isSquareBlocked(board, F1, G1);
+                case BLACK -> isSquareBlocked(board, F8, G8);
             };
         } else if (moveType == KING_CASTLE_LONG) {
             return switch (color) {
-                case WHITE -> isSquaresEmpty(board, D1, C1, B1);
-                case BLACK -> isSquaresEmpty(board, D8, C8, B8);
+                case WHITE -> isSquareBlocked(board, D1, C1, B1);
+                case BLACK -> isSquareBlocked(board, D8, C8, B8);
             };
         }
         return false;
     }
 
-    private boolean isSquaresEmpty(Board board, Square... squares) {
+    private boolean isSquareBlocked(Board board, Square... squares) {
         for (Square square : squares) {
-            if (board.getPieceAt(square) != null) return false;
+            if (board.getPieceAt(square) != null) return true;
         }
-        return true;
+        return false;
     }
 }
