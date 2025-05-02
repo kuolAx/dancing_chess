@@ -143,7 +143,10 @@ public class Board {
                 .dancePartner(pawn.getDancePartner())
                 .build();
 
-        pawn.getDancePartner().setDancePartner(promotedPiece);
+        // update dancePartner of pawn if present
+        Piece dancePartner = pawn.getDancePartner();
+        if (dancePartner != null) dancePartner.setDancePartner(promotedPiece);
+
         pieces.put(position, promotedPiece);
     }
 
