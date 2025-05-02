@@ -102,8 +102,10 @@ public class ChessApplication extends GameApplication {
             selectedPiece = clickedPiece;
             System.out.println("Selected " + clickedPiece.getId() + "on " + clickedSquare);
 
+            getGameWorld().addEntity(entityFactory.spawnSelectedPieceHighlight(selectedPiece.getPosition()));
+
             selectedPieceLegalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
-            if (!selectedPieceLegalMoves.isEmpty()) highlightSquares(selectedPieceLegalMoves);
+            if (!selectedPieceLegalMoves.isEmpty()) spawnLegalMoveHighlights(selectedPieceLegalMoves);
         } else {
             // second click - move selected piece
             boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
@@ -121,7 +123,7 @@ public class ChessApplication extends GameApplication {
         }
     }
 
-    private void highlightSquares(List<Square> squares) {
+    private void spawnLegalMoveHighlights(List<Square> squares) {
         squares.forEach(at -> getGameWorld().addEntity(entityFactory.spawnHighlight(at)));
     }
 
