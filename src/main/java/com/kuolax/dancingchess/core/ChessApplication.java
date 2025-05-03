@@ -57,10 +57,10 @@ public class ChessApplication extends GameApplication {
         getGameWorld().addEntityFactory(entityFactory);
 
         Arrays.stream(Square.values())
-                .forEach(at -> getGameWorld().addEntities(entityFactory.spawnSquare(at),
-                        entityFactory.spawnSquareText(at)));
+                .forEach(at -> getGameWorld().addEntities(entityFactory.spawnSquare(at)
+                        /* ,entityFactory.spawnSquareText(at)*/));
         updateBoard();
-        setupMousePositionTracker();
+//        setupMousePositionTracker();
     }
 
     private void updateBoard() {
