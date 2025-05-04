@@ -35,12 +35,7 @@ public class Piece {
 
     public List<Square> getLegalMoves(Board board) {
         Square from = getPosition();
-
-        List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
-
-        return allLegalMoves.stream()
-                .filter(to -> !board.movePutsKingInCheck(from, to))
-                .toList();
+        return type.getMoveValidator().getAllLegalMoves(this, from, board);
     }
 
     public boolean hasLegalMoves(Board board) {

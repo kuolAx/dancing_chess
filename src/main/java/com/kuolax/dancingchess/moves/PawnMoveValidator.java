@@ -42,7 +42,7 @@ public class PawnMoveValidator extends AbstractMoveValidator {
         MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, direction);
         if (pawnMoveType == null) return false;
 
-        return switch (pawnMoveType) {
+        boolean isLegalMove = switch (pawnMoveType) {
             case PAWN_SINGLE_FORWARD -> board.getPieceAt(to) == null;
             case PAWN_DOUBLE_FORWARD -> {
                 Square between = Square.getByCoordinates(from.getX(), from.getY() + direction);
@@ -56,5 +56,7 @@ public class PawnMoveValidator extends AbstractMoveValidator {
             }
             default -> false;
         };
+
+        return isLegalMove && !board.movePutsKingInCheck(from, to);
     }
 }
