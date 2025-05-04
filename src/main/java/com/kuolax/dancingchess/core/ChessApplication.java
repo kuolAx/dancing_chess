@@ -33,6 +33,7 @@ public class ChessApplication extends GameApplication {
     private static final int BOARD_X_OFFSET = 0;
     private static final int BOARD_Y_OFFSET = 0;
     private final ChessEntityFactory entityFactory = new ChessEntityFactory();
+
     private GameController gameController;
     private Piece selectedPiece;
     private Square selectedSquare;
@@ -81,7 +82,7 @@ public class ChessApplication extends GameApplication {
 
     @Override
     protected void initInput() {
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseClick);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
     }
 
     private void handleMouseClick(MouseEvent mouseEvent) {
@@ -117,20 +118,32 @@ public class ChessApplication extends GameApplication {
             }
         } else {
             // second click - move selected piece
-            boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
+            if (selectedPieceLegalMoves != null && selectedPieceLegalMoves.contains(clickedSquare)) {
+                boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
 
-            if (moveSuccessful) {
-                refreshLastMoveHighlights(clickedSquare);
+                if (moveSuccessful) {
+                    refreshLastMoveHighlights(clickedSquare);
 
-                updateBoard();
-                if (gameController.isGameOver()) showGameOverDialog();
-                if (gameController.canPromote(selectedPiece, clickedSquare)) showPromotionDialog(clickedSquare);
+                    updateBoard();
+                    if (gameController.isGameOver()) showGameOverDialog();
+                    if (gameController.canPromote(selectedPiece, clickedSquare)) showPromotionDialog(clickedSquare);
+                }
+
+                // reset selection
+                clearHighlights();
+                selectedSquare = null;
+                selectedPiece = null;
+
+            } else if (selectedPiece != null) {
+                // select new piece on clicked square if present
+                // reset current selection
+                selectedPiece = null;
+                selectedSquare = null;
+                selectedPieceLegalMoves = null;
+                clearHighlights();
+
+                processSquareClick(clickedSquare);
             }
-
-            // reset selection
-            clearHighlights();
-            selectedSquare = null;
-            selectedPiece = null;
         }
     }
 
