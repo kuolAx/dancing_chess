@@ -1,5 +1,10 @@
 package com.kuolax.dancingchess.pieces;
 
 public enum PieceColor {
-    BLACK, WHITE
+    BLACK, WHITE;
+    
+    public PieceColor getOpponent() {
+        return this == WHITE ? BLACK : WHITE;
+    }
 }
+
