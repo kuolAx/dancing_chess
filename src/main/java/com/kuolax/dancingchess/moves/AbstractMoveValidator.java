@@ -17,13 +17,18 @@ public abstract class AbstractMoveValidator implements MoveValidator {
 
     @Override
     public boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
+        return canTakeOn(piece, from, to, board)
+                && !board.movePutsKingInCheck(from, to);
+    }
+
+    @Override
+    public boolean canTakeOn(Piece piece, Square from, Square to, Board board) {
         MoveType moveType = determineStandardMoveType(from, to);
 
         return moveType != null
                 && getLegalMoveTypes().contains(moveType)
                 && isPathClear(from, to, moveType, board)
-                && isEmptySquareOrCanTakeOnTargetSquare(piece, to, board)
-                && !board.movePutsKingInCheck(from, to);
+                && isEmptySquareOrCanTakeOnTargetSquare(piece, to, board);
     }
 
     @Override

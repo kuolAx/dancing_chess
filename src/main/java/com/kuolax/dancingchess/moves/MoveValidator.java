@@ -11,4 +11,6 @@ public interface MoveValidator {
     boolean isLegalMove(Piece piece, Square from, Square to, Board board);
 
     List<Square> getAllLegalMoves(Piece piece, Square from, Board board);
+
+    boolean canTakeOn(Piece piece, Square from, Square to, Board board);
 }

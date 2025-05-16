@@ -11,6 +11,7 @@ import java.util.List;
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_CAPTURE;
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_DOUBLE_FORWARD;
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_SINGLE_FORWARD;
+import static com.kuolax.dancingchess.moves.MoveType.determinePawnMoveType;
 import static com.kuolax.dancingchess.moves.MoveType.isPawnMove;
 import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 
@@ -32,6 +33,14 @@ public class PawnMoveValidator extends AbstractMoveValidator {
         return Arrays.stream(Square.values())
                 .filter(to -> isPawnMove(from, to, moveDirection))
                 .toList();
+    }
+
+    @Override
+    public boolean canTakeOn(Piece pawn, Square from, Square to, Board board) {
+        return determinePawnMoveType(from, to, getPawnMoveDirection(pawn.getColor())) == PAWN_CAPTURE
+                && board.hasPieceAt(to)
+                && board.getPieceAt(to).getColor() != pawn.getColor()
+                && !pawn.isInUnion();
     }
 
     @Override

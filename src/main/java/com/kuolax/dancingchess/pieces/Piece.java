@@ -28,8 +28,8 @@ public class Piece {
     public boolean canTakeOn(Square from, Square to, Board board) {
         return switch (getType()) {
             case KING -> false;
-            case PAWN -> !from.isVerticalTo(to) && type.getMoveValidator().isLegalMove(this, from, to, board);
-            case ROOK, BISHOP, KNIGHT, QUEEN -> type.getMoveValidator().isLegalMove(this, from, to, board);
+            case PAWN -> !from.isVerticalTo(to) && type.getMoveValidator().canTakeOn(this, from, to, board);
+            case ROOK, BISHOP, KNIGHT, QUEEN -> type.getMoveValidator().canTakeOn(this, from, to, board);
         };
     }
 

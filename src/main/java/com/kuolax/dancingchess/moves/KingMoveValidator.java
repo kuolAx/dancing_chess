@@ -44,6 +44,11 @@ public class KingMoveValidator extends AbstractMoveValidator {
     }
 
     @Override
+    public boolean canTakeOn(Piece piece, Square from, Square to, Board board) {
+        return false;
+    }
+
+    @Override
     public boolean isLegalMove(Piece king, Square from, Square to, Board board) {
         PieceColor kingColor = king.getColor();
         MoveType kingMoveType = MoveType.determineKingMoveType(from, to, kingColor);
