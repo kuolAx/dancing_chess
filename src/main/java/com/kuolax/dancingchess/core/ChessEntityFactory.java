@@ -6,7 +6,6 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.Spawns;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -54,9 +53,8 @@ public class ChessEntityFactory implements EntityFactory {
     public Entity spawnPiece(Piece piece, Square at) {
         return FXGL.entityBuilder()
                 .type(PIECE)
-                .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
-                .at(at.getSpawnX() + 6, at.getSpawnY() + SQUARE_SIZE - 10)
-                .scale(SQUARE_SIZE / 14.16, SQUARE_SIZE / 14.16)
+                .view("white_king.svg")
+                .at(at.getSpawnX(), at.getSpawnY())
                 .zIndex(2)
                 .anchorFromCenter()
                 .build();
@@ -122,7 +120,6 @@ public class ChessEntityFactory implements EntityFactory {
                 .build();
     }
 
-
     @Spawns("squareText")
     public Entity spawnSquareText(Square square) {
         return FXGL.entityBuilder()
@@ -135,6 +132,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .build();
     }
 
+    // initial piece representation while no sprites are present yet
     private String getPieceSymbol(PieceType type, boolean isWhite) {
         return switch (type) {
             case PAWN -> isWhite ? "♙" : "♟";
