@@ -7,21 +7,20 @@ import chess.dancing.pieces.Piece;
 public class KingMoveValidator implements MoveValidator {
     @Override
     public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
-        int rowDiff = Math.abs(from.getRow() - to.getRow());
-        int colDiff = Math.abs(from.getColumn() - to.getColumn());
+        int rowDiff = from.getRowDiff(to);
+        int colDiff = from.getColumnDiff(to);
 
-        // Normale Königsbewegung
+        // normal move
         boolean normalMove = rowDiff <= 1 && colDiff <= 1 && (rowDiff > 0 || colDiff > 0);
 
-        // Rochade-Logik
+        // castling move
         boolean castling = isCastlingMove(piece, from, to, board);
 
         return normalMove || castling;
     }
 
     private boolean isCastlingMove(Piece piece, Square from, Square to, ChessBoard board) {
-        // Komplexe Prüfung der Rochade-Bedingungen
-        // ...
+        // check for castling conditions
         return false;
     }
 }
