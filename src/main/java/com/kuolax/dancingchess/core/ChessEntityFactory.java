@@ -22,9 +22,7 @@ import static com.kuolax.dancingchess.core.EntityType.PIECE;
 import static com.kuolax.dancingchess.core.EntityType.SELECTED_PIECE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.SQUARE;
 import static com.kuolax.dancingchess.core.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
-import static javafx.scene.paint.Color.DARKOLIVEGREEN;
 import static javafx.scene.paint.Color.HOTPINK;
-import static javafx.scene.paint.Color.TRANSPARENT;
 
 public class ChessEntityFactory implements EntityFactory {
 
@@ -93,24 +91,6 @@ public class ChessEntityFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("takeablePieceHighlight")
-    public Entity spawnTakeablePieceHighlight(Square at) {
-        Circle highlight = new Circle(SQUARE_SIZE / 3 - 2);
-        highlight.setFill(TRANSPARENT);
-        highlight.setStroke(DARKOLIVEGREEN);
-        highlight.setStrokeWidth(5);
-        highlight.setCenterX(SQUARE_SIZE / 2);
-        highlight.setCenterY(SQUARE_SIZE / 2);
-
-        return FXGL.entityBuilder()
-                .type(SELECTED_PIECE_HIGHLIGHT)
-                .at(at.getSpawnX(), at.getSpawnY())
-                .view(highlight)
-                .zIndex(1)
-                .anchorFromCenter()
-                .build();
-    }
-
     @Spawns("takeablePieceHighlightPolygons")
     public Entity spawnTakeablePieceHighlightPolygons(Square at) {
         double x = at.getSpawnX();
@@ -118,7 +98,7 @@ public class ChessEntityFactory implements EntityFactory {
 
         Group highlightGroup = new Group();
 
-        double triangleSize = SQUARE_SIZE / 3;
+        double triangleSize = SQUARE_SIZE / 4;
         Color highlightColor = Color.GRAY;
 
         Polygon topLeft = new Polygon(0, 0, triangleSize, 0, 0, triangleSize);
