@@ -6,6 +6,7 @@ import chess.dancing.pieces.state.DefaultPieceState;
 import chess.dancing.pieces.state.KingState;
 import chess.dancing.pieces.state.PawnState;
 import chess.dancing.pieces.state.PieceState;
+import chess.dancing.pieces.state.RookState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,7 @@ public class Piece {
             state = switch (type) {
                 case PAWN -> new PawnState();
                 case KING -> new KingState();
+                case ROOK -> new RookState();
                 default -> new DefaultPieceState();
             };
         }
