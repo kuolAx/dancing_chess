@@ -58,8 +58,9 @@ public class GameController {
             PieceType promotionType = null;
 
             // promotion, castling, en passant
-            if (piece.getType() == PAWN && piece.getPosition().isOnLastRow(currentPlayer)) {
-                promotionType = triggerPromotion(piece, piece.getPosition());
+            if (canPromote(piece, to)) {
+                // promotionType = triggerPromotion(piece, piece.getPosition());
+                // todo put moveGeneration for History in Application - better access to promotion type
                 isPromotion = true;
             } else if (board.isKingCastlingMove(from, to, piece)) {
                 isCastling = true;
@@ -114,9 +115,7 @@ public class GameController {
                 .anyMatch(piece -> piece.hasLegalMoves(board));
     }
 
-    private PieceType triggerPromotion(Piece pawn, Square position) {
-        PieceType promotionType = PieceType.QUEEN;
-        board.promotePawn(pawn, promotionType, position);
-        return promotionType;
+    public boolean canPromote(Piece piece, Square to) {
+        return piece.getType() == PAWN && to.isOnLastRow(currentPlayer);
     }
 }

@@ -4,11 +4,11 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.ui.Position;
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import javafx.scene.input.MouseButton;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +22,8 @@ import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
 
 public class DancingChessApplication extends GameApplication {
     private GameController gameController;
-    private Entity selectedPiece;
-    private Position selectedPosition;
+    private Piece selectedPiece;
+    private Square selectedSquare;
 
     public static void main(String[] args) {
         launch(args);
@@ -40,14 +40,13 @@ public class DancingChessApplication extends GameApplication {
     @Override
     protected void initGame() {
         gameController = new GameController();
-
         int squareSize = 85;
 
         Arrays.stream(Square.values())
                 .forEach(s -> FXGL.entityBuilder()
                         .type(EntityType.PIECE)
                         .at((s.getX() * squareSize), (s.getY() * squareSize))
-                        .view(new javafx.scene.shape.Rectangle(squareSize, squareSize, s.getSquareColor()))
+                        .view(new Rectangle(squareSize, squareSize, s.getSquareColor()))
                         .buildAndAttach());
 
         updateBoardView();
@@ -56,35 +55,30 @@ public class DancingChessApplication extends GameApplication {
     private void updateBoardView() {
         getGameWorld().getEntitiesByType(EntityType.PIECE).forEach(Entity::removeFromWorld);
 
-        // Erstelle neue Figuren basierend auf dem aktuellen Board-Zustand
         Board board = gameController.getBoard();
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Position pos = new Position(row, col);
-                Piece piece = board.getPieceAt(pos);
-
-                if (piece != null) {
-                    Entity pieceEntity = EntityFactory.createPiece(piece);
+        Arrays.stream(Square.values())
+                .filter(s -> board.getPieceAt(s) != null)
+                .forEach(s -> {
+                    Entity pieceEntity = EntityFactory.createPiece(board.getPieceAt(s));
                     getGameWorld().addEntity(pieceEntity);
-                }
-            }
-        }
+                });
     }
 
     @Override
     protected void initInput() {
         onMousePressed(MouseButton.PRIMARY, event -> {
-            int col = (int) (event.getX() / 64);
-            int row = 7 - (int) (event.getY() / 64); // FXGL Y-Achse ist umgekehrt
+            int x = (int) (event.getX() / 64);
+            int y = 7 - (int) (event.getY() / 64);
 
-            Position clickedPos = new Position(row, col);
-            Piece clickedPiece = gameController.getBoard().getPieceAt(clickedPos);
+            Square clickedSquare = Square.getByCoordinates(x, y);
+            Piece clickedPiece = gameController.getBoard().getPieceAt(clickedSquare);
 
-            if (selectedPiece == null && clickedPiece != null &&
-                    clickedPiece.getColor() == gameController.getCurrentPlayer()) {
-                // Erste Auswahl: Figur selektieren
-                selectedPosition = clickedPos;
+            if (selectedPiece == null
+                    && clickedPiece != null
+                    && clickedPiece.getColor() == gameController.getCurrentPlayer()) {
+
+                selectedSquare = clickedSquare;
                 selectedPiece = getGameWorld().getEntitiesAt(event.getPosition())
                         .stream()
                         .filter(e -> e.getType() == EntityType.PIECE)
@@ -92,41 +86,34 @@ public class DancingChessApplication extends GameApplication {
                         .orElse(null);
 
                 if (selectedPiece != null) {
-                    // Markiere mögliche Züge
-                    List<Position> legalMoves = gameController.getBoard().getLegalMoves(selectedPosition);
+                    List<Square> legalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
                     highlightLegalMoves(legalMoves);
                 }
             } else if (selectedPiece != null) {
-                // Zweite Auswahl: Zielfeld
-                boolean moveSuccessful = gameController.makeMove(selectedPosition, clickedPos);
+                boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
 
                 if (moveSuccessful) {
-                    // Aktualisiere die Ansicht
                     updateBoardView();
 
-                    // Prüfe auf Spielende
                     if (gameController.isGameOver()) {
                         showGameOverDialog();
                     }
 
-                    // Prüfe auf Bauernumwandlung
-                    if (gameController.getBoard().canPromote(clickedPos)) {
-                        showPromotionDialog(clickedPos);
+                    if (gameController.canPromote(selectedPiece, clickedSquare)) {
+                        showPromotionDialog(clickedSquare);
                     }
                 }
 
                 selectedPiece = null;
-                selectedPosition = null;
+                selectedSquare = null;
                 clearHighlights();
             }
         });
     }
 
-    private void highlightLegalMoves(List<Position> positions) {
-        for (Position pos : positions) {
-            Entity highlight = EntityFactory.createHighlight(pos);
-            getGameWorld().addEntity(highlight);
-        }
+    private void highlightLegalMoves(List<Square> squares) {
+        squares.parallelStream()
+                .forEach(s -> getGameWorld().addEntity(EntityFactory.createHighlight(s)));
     }
 
     private void clearHighlights() {
@@ -152,7 +139,7 @@ public class DancingChessApplication extends GameApplication {
 
     private void showPromotionDialog(Square position) {
         getDialogService().showChoiceBox(
-                "Pawn Promotion. \n Choose your piece:",
+                "Pawn Promotion.\nChoose your piece:",
                 pieceType -> {
                     Piece pawn = gameController.getBoard().getPieceAt(position);
                     gameController.getBoard().promotePawn(pawn, pieceType, position);
