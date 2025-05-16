@@ -186,6 +186,14 @@ public class ChessApplication extends GameApplication {
                 QUEEN, KNIGHT, BISHOP, ROOK);
     }
 
+    private void clearAllHighlights() {
+        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
+                        EntityType.SELECTED_PIECE_HIGHLIGHT,
+                        EntityType.TAKEABLE_PIECE_HIGHLIGHT,
+                        EntityType.LAST_MOVE_HIGHLIGHT)
+                .forEach(Entity::removeFromWorld);
+    }
+
     private void setupMousePositionTracker() {
         Text mousePositionText = new Text();
         mousePositionText.setTranslateX(8 * SQUARE_SIZE + 20);
@@ -211,13 +219,5 @@ public class ChessApplication extends GameApplication {
                     BOARD_X_OFFSET, BOARD_Y_OFFSET
             ));
         });
-    }
-
-    private void clearAllHighlights() {
-        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
-                        EntityType.SELECTED_PIECE_HIGHLIGHT,
-                        EntityType.TAKEABLE_PIECE_HIGHLIGHT,
-                        EntityType.LAST_MOVE_HIGHLIGHT)
-                .forEach(Entity::removeFromWorld);
     }
 }

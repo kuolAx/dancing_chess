@@ -67,7 +67,7 @@ public class ChessEntityFactory implements EntityFactory {
     @Spawns("legalMoveHighlight")
     public Entity spawnLegalMoveHighlight(Square at) {
         Circle highlight = new Circle(SQUARE_SIZE / 5);
-        highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.8));
+        highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.5));
         highlight.setCenterX(SQUARE_SIZE / 2);
         highlight.setCenterY(SQUARE_SIZE / 2);
 
