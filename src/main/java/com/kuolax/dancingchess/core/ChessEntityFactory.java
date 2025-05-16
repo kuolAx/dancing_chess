@@ -25,6 +25,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .view(new Text(square.toString()))
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
+                .anchorFromCenter()
                 .build();
     }
 
@@ -34,8 +35,8 @@ public class ChessEntityFactory implements EntityFactory {
                 .type(EntityType.PIECE)
                 .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE / 2, STANDARD_SQUARE_SIZE / 2, Color.color(0.5, 0.1, 0.7, 0.5)))
                 .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
-                .anchorFromCenter()
                 .at(at.getSpawnX(), at.getSpawnY())
+                .anchorFromCenter()
                 .build();
     }
 
@@ -51,6 +52,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .at(at.getSpawnX(), at.getSpawnY())
                 .view(highlight)
                 .zIndex(1)
+                .anchorFromCenter()
                 .build();
     }
 

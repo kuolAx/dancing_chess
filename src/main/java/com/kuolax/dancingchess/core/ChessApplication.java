@@ -69,7 +69,7 @@ public class ChessApplication extends GameApplication {
 
     private void handleMouseClick(MouseEvent event) {
         int boardX = (int) (event.getX() / STANDARD_SQUARE_SIZE);
-        int boardY = (int) (event.getY() / STANDARD_SQUARE_SIZE);
+        int boardY = 8 - (int) (event.getY() / STANDARD_SQUARE_SIZE);
 
         Square clickedSquare = Square.getByCoordinates(boardX, boardY);
         if (clickedSquare != null) {
