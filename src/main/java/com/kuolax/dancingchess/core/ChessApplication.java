@@ -25,7 +25,6 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 import static com.kuolax.dancingchess.board.Square.getSquareByMousePosition;
-import static com.kuolax.dancingchess.core.EntityType.CHECK_HIGHLIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
 import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
@@ -83,7 +82,7 @@ public class ChessApplication extends GameApplication {
             gameWorld.addEntity(entityFactory.spawnCheckHighlight(board.getKingSquare(currentPlayer)));
             FXGL.getAssetLoader().loadSound("move-check.mp3").getAudio().play();
         } else {
-            gameWorld.getEntitiesByType(CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
+            gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         }
 
         Arrays.stream(Square.values())
@@ -141,7 +140,7 @@ public class ChessApplication extends GameApplication {
 
                     updateBoard();
                     if (gameController.isGameOver()) showGameOverDialog();
-                    if (gameController.canPromote(selectedPiece, clickedSquare)) showPromotionDialog(clickedSquare);
+                    if (gameController.getBoard().getLastMove().isPromotion()) showPromotionDialog(clickedSquare);
                 }
 
                 // reset selection
@@ -218,7 +217,8 @@ public class ChessApplication extends GameApplication {
         gameWorld.getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
                         EntityType.SELECTED_PIECE_HIGHLIGHT,
                         EntityType.TAKEABLE_PIECE_HIGHLIGHT,
-                        EntityType.LAST_MOVE_HIGHLIGHT)
+                        EntityType.LAST_MOVE_HIGHLIGHT,
+                        EntityType.CHECK_HIGHLIGHT)
                 .forEach(Entity::removeFromWorld);
     }
 

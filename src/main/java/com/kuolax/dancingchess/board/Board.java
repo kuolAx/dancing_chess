@@ -3,6 +3,7 @@ package com.kuolax.dancingchess.board;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -32,6 +33,8 @@ import static com.kuolax.dancingchess.pieces.PieceType.PAWN;
 public class Board {
 
     private final Map<Square, Piece> pieces = new EnumMap<>(Square.class);
+    @Getter
+    private Move lastMove;
     private boolean whiteChecked;
     private boolean blackChecked;
 
@@ -69,14 +72,23 @@ public class Board {
             pieces.put(to, piece);
             piece.setPosition(to);
 
+            PieceColor playerColor = piece.getColor();
+
             // checks for legal castling are done in king move validation beforehand
+            boolean isCastling = false;
             if (isKingCastlingMove(from, to, piece)) {
-                castleRook(to, piece.getColor());
+                castleRook(to, playerColor);
+                isCastling = true;
             }
 
             updateCheckStatus();
 
             piece.setMoved(true);
+
+            boolean isCheck = isCheck(playerColor);
+            lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves(playerColor),
+                    false, null, canPromote(piece, to), null);
+
             return true;
         }
         return false;
@@ -90,16 +102,17 @@ public class Board {
         return getPieceAt(at) != null;
     }
 
-    public List<Piece> getPiecesByColor(PieceColor color) {
+    public List<Piece> getPiecesByColor(PieceColor playerColor) {
         return Arrays.stream(Square.values())
                 .map(this::getPieceAt)
                 .filter(Objects::nonNull)
-                .filter(piece -> piece.getColor() == color)
+                .filter(piece -> piece.getColor() == playerColor)
                 .toList();
     }
 
     public boolean isCheck(PieceColor playerColor) {
-        return canAnyPieceTakeOn(getKingSquare(playerColor), playerColor);
+        Square kingSquare = getKingSquare(playerColor);
+        return canAnyPieceTakeOn(kingSquare, playerColor);
     }
 
     public boolean canAnyPieceTakeOn(Square target, PieceColor playerColor) {
@@ -141,22 +154,35 @@ public class Board {
                 .dancePartner(pawn.getDancePartner())
                 .build();
 
-        // update dancePartner of pawn if present
         Piece dancePartner = pawn.getDancePartner();
         if (dancePartner != null) dancePartner.setDancePartner(promotedPiece);
 
         pieces.put(position, promotedPiece);
     }
 
-    private void updateCheckStatus() {
-        whiteChecked = isCheck(WHITE);
-        blackChecked = isCheck(BLACK);
+    public Square getKingSquare(PieceColor playerColor) {
+        return getPiecesByColor(playerColor).stream()
+                .filter(piece -> piece.getType() == KING)
+                .map(Piece::getPosition)
+                .findAny()
+                .orElse(null);
+    }
+
+    public boolean hasNoLegalMoves(PieceColor playerColor) {
+        List<Piece> pieceList = getPiecesByColor(playerColor);
+        return pieceList.stream()
+                .noneMatch(piece -> piece.hasLegalMoves(this));
     }
 
     public boolean isKingCastlingMove(Square from, Square to, Piece piece) {
         if (piece.getType() != KING) return false;
         return (E1 == from && (C1 == to || G1 == to))
                 || (E8 == from && (C8 == to || G8 == to));
+    }
+
+    private void updateCheckStatus() {
+        whiteChecked = isCheck(WHITE);
+        blackChecked = isCheck(BLACK);
     }
 
     private void castleRook(Square to, PieceColor playerColor) {
@@ -178,12 +204,8 @@ public class Board {
         rook.setMoved(true);
     }
 
-    public Square getKingSquare(PieceColor playerColor) {
-        return getPiecesByColor(playerColor).stream()
-                .filter(piece -> piece.getType() == KING)
-                .map(Piece::getPosition)
-                .findAny()
-                .orElse(null);
+    private boolean canPromote(Piece piece, Square to) {
+        return piece.getType() == PAWN && to.isLastRow(piece.getColor());
     }
 }
 
