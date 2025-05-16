@@ -23,7 +23,7 @@ import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 @Getter
 public class GameController {
 
-    private final List<Move> moveHistory;
+    private List<Move> moveHistory;
     private Board board;
     private PieceColor currentPlayer;
     private PieceColor opponent;
@@ -65,6 +65,7 @@ public class GameController {
         opponent = BLACK;
         roundNumber = 1;
         gameState = ONGOING;
+        moveHistory = new ArrayList<>();
     }
 
     private void switchPlayer() {
