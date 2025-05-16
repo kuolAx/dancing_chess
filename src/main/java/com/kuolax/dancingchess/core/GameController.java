@@ -104,16 +104,16 @@ public class GameController {
     }
 
     private boolean isThreeMoveRepetition(List<MoveRecord> moveRecords) {
-        return moveRecords.parallelStream()
+        return moveRecords.stream()
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
-                .parallelStream()
+                .stream()
                 .anyMatch(moveRecordEntry -> moveRecordEntry.getValue() >= 3);
     }
 
     private boolean hasLegalMoves(PieceColor currentPlayer) {
         List<Piece> pieces = board.getPiecesByColor(currentPlayer);
-        return pieces.parallelStream()
+        return pieces.stream()
                 .anyMatch(piece -> piece.hasLegalMoves(board));
     }
 
