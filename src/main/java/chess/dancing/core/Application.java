@@ -1,4 +1,4 @@
-package chess.dancing.core.application;
+package chess.dancing.core;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
