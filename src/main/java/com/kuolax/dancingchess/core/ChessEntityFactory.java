@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 import static com.kuolax.dancingchess.core.EntityType.CHECK_HIGHLIGHT;
+import static com.kuolax.dancingchess.core.EntityType.DRAG_TARGET_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.LAST_MOVE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.LEGAL_MOVE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.PIECE;
@@ -22,7 +23,7 @@ import static com.kuolax.dancingchess.core.EntityType.SELECTED_PIECE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.SQUARE;
 import static com.kuolax.dancingchess.core.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
 import static javafx.scene.paint.Color.DARKRED;
-import static javafx.scene.paint.Color.HOTPINK;
+import static javafx.scene.paint.Color.YELLOWGREEN;
 
 public class ChessEntityFactory implements EntityFactory {
 
@@ -42,7 +43,7 @@ public class ChessEntityFactory implements EntityFactory {
     public Entity spawnLastMoveHighlight(Square square) {
         return FXGL.entityBuilder()
                 .type(LAST_MOVE_HIGHLIGHT)
-                .view(new Rectangle(SQUARE_SIZE, SQUARE_SIZE, HOTPINK))
+                .view(new Rectangle(SQUARE_SIZE, SQUARE_SIZE, YELLOWGREEN))
                 .zIndex(1)
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
@@ -87,7 +88,20 @@ public class ChessEntityFactory implements EntityFactory {
                         javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 1)))
                 .zIndex(1)
                 .at(at.getSpawnX(), at.getSpawnY())
-                .opacity(0.5)
+                .opacity(0.8)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("dragTargetHighlight")
+    public Entity spawnDragTargetHighlight(Square at) {
+        return FXGL.entityBuilder()
+                .type(DRAG_TARGET_HIGHLIGHT)
+                .view(new Rectangle(SQUARE_SIZE, SQUARE_SIZE,
+                        javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 1)))
+                .zIndex(1)
+                .at(at.getSpawnX(), at.getSpawnY())
+                .opacity(0.8)
                 .anchorFromCenter()
                 .build();
     }
@@ -151,5 +165,13 @@ public class ChessEntityFactory implements EntityFactory {
                 .opacity(0.3)
                 .anchorFromCenter()
                 .build();
+    }
+
+    @Spawns("draggedPieceShadow")
+    public Entity spawnPieceShadow(Piece draggedPiece, Square clickedSquare) {
+        Entity draggedPieceEntity = spawnPiece(draggedPiece, clickedSquare);
+        draggedPieceEntity.setOpacity(0.8);
+        draggedPieceEntity.setZIndex(2);
+        return draggedPieceEntity;
     }
 }

@@ -25,7 +25,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
-import static com.kuolax.dancingchess.board.Square.getSquareByMousePosition;
+import static com.kuolax.dancingchess.board.Square.getByMousePosition;
 import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
 import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
@@ -42,6 +42,10 @@ public class ChessApplication extends GameApplication {
     private Piece selectedPiece;
     private Square selectedSquare;
     private List<Square> selectedPieceLegalMoves;
+
+    //dragging functionality
+    private boolean isDragging;
+    private Entity draggedPieceShadow;
 
     public static void main(String[] args) {
         launch(args);
@@ -77,18 +81,17 @@ public class ChessApplication extends GameApplication {
 
         gameWorld.getEntitiesByType(EntityType.PIECE).forEach(Entity::removeFromWorld);
 
+        // reset or redraw check highlight
+        gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         Board board = gameController.getBoard();
-
         if (board.isChecked(currentPlayer)) {
             gameWorld.addEntity(entityFactory.spawnCheckHighlight(board.getKingSquare(currentPlayer)));
-        } else {
-            gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         }
 
         playSoundForLastMove(gameController.getBoard().getLastMove());
 
         Arrays.stream(Square.values())
-                .filter(s -> board.getPieceAt(s) != null)
+                .filter(board::hasPieceAt)
                 .forEach(s -> {
                     Entity pieceEntity = entityFactory.spawnPiece(board.getPieceAt(s), s);
                     gameWorld.addEntity(pieceEntity);
@@ -98,6 +101,8 @@ public class ChessApplication extends GameApplication {
     @Override
     protected void initInput() {
         FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
     }
 
     private void playSoundForLastMove(Move lastMove) {
@@ -114,7 +119,7 @@ public class ChessApplication extends GameApplication {
     private void handleMouseClick(MouseEvent mouseEvent) {
         MouseButton button = mouseEvent.getButton();
         if (button == MouseButton.PRIMARY) {
-            Square clickedSquare = Square.getSquareByMousePosition(mouseEvent);
+            Square clickedSquare = Square.getByMousePosition(mouseEvent);
             if (clickedSquare != null) {
                 processSquareClick(clickedSquare);
             }
@@ -122,7 +127,10 @@ public class ChessApplication extends GameApplication {
             selectedPiece = null;
             selectedSquare = null;
             selectedPieceLegalMoves = null;
-            clearAllHighlights();
+            clearHighlights();
+            isDragging = false;
+            if (draggedPieceShadow != null) draggedPieceShadow.removeFromWorld();
+            draggedPieceShadow = null;
         }
     }
 
@@ -142,23 +150,16 @@ public class ChessApplication extends GameApplication {
             if (!selectedPieceLegalMoves.isEmpty()) {
                 setLegalMoveHighlights();
             }
+
+            // initialise piece dragging
+            draggedPieceShadow = entityFactory.spawnPieceShadow(selectedPiece, clickedSquare);
+            FXGL.getGameWorld().addEntity(draggedPieceShadow);
+            isDragging = true;
+
         } else {
             // second click - move selected piece
             if (selectedPieceLegalMoves != null && selectedPieceLegalMoves.contains(clickedSquare)) {
-                boolean moveSuccessful = gameController.makeMove(selectedSquare, clickedSquare);
-
-                if (moveSuccessful) {
-                    refreshLastMoveHighlights(clickedSquare);
-
-                    updateBoard();
-                    if (gameController.isGameOver()) showGameOverDialog();
-                    if (gameController.getBoard().getLastMove().isPromotion()) showPromotionDialog(clickedSquare);
-                }
-
-                // reset selection
-                clearHighlights();
-                selectedSquare = null;
-                selectedPiece = null;
+                handleMoveLogic(clickedSquare);
 
             } else if (selectedPiece != null) {
                 // select new piece on clicked square if present
@@ -172,6 +173,63 @@ public class ChessApplication extends GameApplication {
             }
         }
     }
+
+    private void handleMoveLogic(Square to) {
+        boolean moveSuccessful = gameController.makeMove(selectedSquare, to);
+
+        if (moveSuccessful) {
+            refreshLastMoveHighlights(to);
+
+            updateBoard();
+            if (gameController.isGameOver()) showGameOverDialog();
+            if (gameController.getBoard().getLastMove().isPromotion()) showPromotionDialog(to);
+        }
+
+        // reset selection
+        clearHighlights();
+        selectedSquare = null;
+        selectedPiece = null;
+    }
+
+    private void onMouseDragged(MouseEvent event) {
+        if (!isDragging || draggedPieceShadow == null) {
+            return;
+        }
+        draggedPieceShadow.setPosition(event.getX() - SQUARE_SIZE / 2, event.getY() - SQUARE_SIZE / 2);
+        updateTargetSquareHighlight(event);
+    }
+
+    private void updateTargetSquareHighlight(MouseEvent event) {
+        FXGL.getGameWorld().getEntitiesByType(EntityType.DRAG_TARGET_HIGHLIGHT).forEach(Entity::removeFromWorld);
+        Square target = Square.getByMousePosition(event);
+
+        if (target != null && selectedPieceLegalMoves != null && selectedPieceLegalMoves.contains(target)) {
+            FXGL.getGameWorld().addEntity(entityFactory.spawnDragTargetHighlight(target));
+        }
+    }
+
+    private void onMouseReleased(MouseEvent event) {
+        if (event.getButton() != MouseButton.PRIMARY || !isDragging || selectedPiece == null || draggedPieceShadow == null) {
+            return;
+        }
+
+        draggedPieceShadow.removeFromWorld();
+        draggedPieceShadow = null;
+        Square targetSquare = Square.getByMousePosition(event);
+
+        if (targetSquare == selectedSquare)
+            return;
+        else if (targetSquare != null && selectedPieceLegalMoves != null && selectedPieceLegalMoves.contains(targetSquare))
+            handleMoveLogic(targetSquare);
+        else
+            clearHighlights();
+
+        isDragging = false;
+        selectedPiece = null;
+        selectedPieceLegalMoves = null;
+        selectedSquare = null;
+    }
+
 
     private void setLegalMoveHighlights() {
         Map<Boolean, List<Square>> isTakingMoveMap = selectedPieceLegalMoves.stream()
@@ -189,13 +247,6 @@ public class ChessApplication extends GameApplication {
         gameWorld.addEntity(entityFactory.spawnLastMoveHighlight(clickedSquare));
     }
 
-    private void clearHighlights() {
-        gameWorld.getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
-                        EntityType.SELECTED_PIECE_HIGHLIGHT,
-                        EntityType.TAKEABLE_PIECE_HIGHLIGHT)
-                .forEach(Entity::removeFromWorld);
-    }
-
     private void showGameOverDialog() {
         GameState state = gameController.getGameState();
 
@@ -208,7 +259,7 @@ public class ChessApplication extends GameApplication {
         };
 
         getDialogService().showMessageBox(message, () -> {
-            clearAllHighlights();
+            gameWorld.getEntitiesByType(EntityType.LAST_MOVE_HIGHLIGHT, EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
             gameController.resetGame();
             updateBoard();
         });
@@ -225,12 +276,11 @@ public class ChessApplication extends GameApplication {
                 QUEEN, KNIGHT, BISHOP, ROOK);
     }
 
-    private void clearAllHighlights() {
+    private void clearHighlights() {
         gameWorld.getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
                         EntityType.SELECTED_PIECE_HIGHLIGHT,
                         EntityType.TAKEABLE_PIECE_HIGHLIGHT,
-                        EntityType.LAST_MOVE_HIGHLIGHT,
-                        EntityType.CHECK_HIGHLIGHT)
+                        EntityType.DRAG_TARGET_HIGHLIGHT)
                 .forEach(Entity::removeFromWorld);
     }
 
@@ -250,7 +300,7 @@ public class ChessApplication extends GameApplication {
             double mouseX = event.getX();
             double mouseY = event.getY();
 
-            Square square = getSquareByMousePosition(event);
+            Square square = getByMousePosition(event);
 
             mousePositionText.setText(String.format(
                     "Mouse: (%.1f, %.1f)%nSquare: %s%nOffset: (X=%d, Y=%d)",

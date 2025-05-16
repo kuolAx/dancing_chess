@@ -39,7 +39,7 @@ public enum Square {
                 .orElse(null);
     }
 
-    public static Square getSquareByMousePosition(MouseEvent event) {
+    public static Square getByMousePosition(MouseEvent event) {
         double mouseX = event.getX();
         double mouseY = event.getY();
 
