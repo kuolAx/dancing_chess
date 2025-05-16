@@ -5,13 +5,19 @@ import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceType;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static com.kuolax.dancingchess.pieces.PieceType.KING;
 
 @Getter
 public class Board {
     private final Map<Square, Piece> pieces = new EnumMap<>(Square.class);
+
+    private Color colorOfCurrentPlayerTurn;
 
     public void initializeBoard() {
         for (Color color : Color.values()) {
@@ -42,6 +48,8 @@ public class Board {
 
         pieces.put(from, null);
         pieces.put(to, piece);
+
+        piece.setMoved(true);
     }
 
     public Piece getPieceAt(Square at) {
@@ -56,15 +64,27 @@ public class Board {
     }
 
     public boolean isKingInCheck(Color kingColor) {
-        // todo implement
-        return false;
+        Optional<Square> kingSquare = Arrays.stream(Square.values())
+                .filter(s -> getPieceAt(s).getType() == KING && getPieceAt(s).getColor() == kingColor)
+                .findAny();
+
+        return canAnyPieceTakeOn(kingSquare.orElse(null));
     }
 
-    public boolean wouldMoveLeaveKingInCheck(Square from, Square to, Piece piece) {
+    public boolean wouldMovePutKingInCheck(Square from, Square to, Piece piece) {
         simulateMove(from, to);
         boolean isKingInCheck = isKingInCheck(piece.getColor());
         simulateMove(to, from);
         return isKingInCheck;
+    }
+
+    public boolean canAnyPieceTakeOn(Square target) {
+        if (target == null) return false;
+
+        return Arrays.stream(Square.values())
+                .filter(s -> getPieceAt(s) != null && getPieceAt(s).getColor() != colorOfCurrentPlayerTurn)
+                .filter(s -> getPieceAt(s).canTakeOn(s, target, this))
+                .toList().isEmpty();
     }
 
     private void simulateMove(Square from, Square to) {

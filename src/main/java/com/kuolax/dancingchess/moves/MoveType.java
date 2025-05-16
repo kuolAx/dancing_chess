@@ -3,6 +3,13 @@ package com.kuolax.dancingchess.moves;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Color;
 
+import static com.kuolax.dancingchess.board.Square.C1;
+import static com.kuolax.dancingchess.board.Square.C8;
+import static com.kuolax.dancingchess.board.Square.E1;
+import static com.kuolax.dancingchess.board.Square.E8;
+import static com.kuolax.dancingchess.board.Square.G1;
+import static com.kuolax.dancingchess.board.Square.G8;
+
 public enum MoveType {
     HORIZONTAL,
     VERTICAL,
@@ -32,33 +39,37 @@ public enum MoveType {
     }
 
     public static boolean isKingMove(Square from, Square to, Color c) {
-        return isNormalKingMove(from, to, c)
+        return isNormalKingMove(from, to)
                 || isKingShortCastleMove(from, to, c)
                 || isKingLongCastleMove(from, to, c);
     }
 
     public static MoveType determineKingMoveType(Square from, Square to, Color c) {
-        if (isNormalKingMove(from, to, c)) return KING_MOVE;
+        if (isNormalKingMove(from, to)) return KING_MOVE;
         else if (isKingShortCastleMove(from, to, c)) return KING_CASTLE_SHORT;
         else if (isKingLongCastleMove(from, to, c)) return KING_CASTLE_LONG;
 
         return null;
     }
 
-    private static boolean isNormalKingMove(Square from, Square to, Color c) {
-        return false;
+    private static boolean isNormalKingMove(Square from, Square to) {
+        int xDiff = from.getXDiff(to);
+        int yDiff = from.getYDiff(to);
+        return xDiff <= 1 && yDiff <= 1;
     }
 
     private static boolean isKingShortCastleMove(Square from, Square to, Color c) {
         return switch (c) {
-            case WHITE -> from ==
-            case BLACK -> from ==
-            default -> false;
+            case WHITE -> from == E1 && to == G1;
+            case BLACK -> from == E8 && to == G8;
         };
     }
 
     private static boolean isKingLongCastleMove(Square from, Square to, Color c) {
-        return false;
+        return switch (c) {
+            case WHITE -> from == E1 && to == C1;
+            case BLACK -> from == E8 && to == C8;
+        };
     }
 
     public static MoveType determinePawnMoveType(Square from, Square to, int direction) {
@@ -76,15 +87,13 @@ public enum MoveType {
     }
 
     private static boolean isPawnSingleForward(Square from, Square to, int direction) {
-        // todo fix logic
         return from.isVerticalTo(to) &&
-                to.getX() == from.getX() + direction;
+                to.getX() == (from.getX() + direction);
     }
 
     private static boolean isPawnDoubleForward(Square from, Square to, int direction) {
         boolean isFirstOrSecondRank = (direction == 1 && from.getX() <= 2) || (direction == -1 && from.getX() >= 6);
 
-        // todo fix logic
         return isFirstOrSecondRank
                 && to.getX() == from.getX() + (direction * 2)
                 && from.isVerticalTo(to);
