@@ -6,6 +6,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 import com.kuolax.dancingchess.board.Board;
+import com.kuolax.dancingchess.board.Move;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
@@ -68,7 +69,7 @@ public class ChessApplication extends GameApplication {
                 .forEach(at -> gameWorld.addEntities(entityFactory.spawnSquare(at)
                         /* ,entityFactory.spawnSquareText(at)*/));
         updateBoard();
-        FXGL.getAssetLoader().loadSound("game-start.mp3").getAudio().play();
+        FXGL.getAssetLoader().loadSound("game_start.mp3").getAudio().play();
     }
 
     private void updateBoard() {
@@ -80,12 +81,11 @@ public class ChessApplication extends GameApplication {
 
         if (board.isChecked(currentPlayer) && board.getLastMove() != null && !board.getLastMove().isCheckmate()) {
             gameWorld.addEntity(entityFactory.spawnCheckHighlight(board.getKingSquare(currentPlayer)));
-            FXGL.getAssetLoader().loadSound("move-check.mp3").getAudio().play();
-        } else if (board.getLastMove() != null && board.getLastMove().isCheckmate()) {
-            FXGL.getAssetLoader().loadSound("checkmate.wav").getAudio().play();
         } else {
             gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         }
+
+        playCorrectSoundForLastMove(gameController.getBoard().getLastMove());
 
         Arrays.stream(Square.values())
                 .filter(s -> board.getPieceAt(s) != null)
@@ -93,6 +93,17 @@ public class ChessApplication extends GameApplication {
                     Entity pieceEntity = entityFactory.spawnPiece(board.getPieceAt(s), s);
                     gameWorld.addEntity(pieceEntity);
                 });
+    }
+
+    private void playCorrectSoundForLastMove(Move lastMove) {
+        if (lastMove == null) return;
+
+        if (lastMove.isCheckmate() || lastMove.isStaleMate())
+            FXGL.getAssetLoader().loadSound("game_end.wav").getAudio().play();
+        else if (lastMove.isCheck()) FXGL.getAssetLoader().loadSound("move-check.mp3").getAudio().play();
+        else if (lastMove.isCastling()) FXGL.getAssetLoader().loadSound("castle.mp3").getAudio().play();
+        else if (lastMove.isPromotion()) FXGL.getAssetLoader().loadSound("promote.mp3").getAudio().play();
+        else FXGL.getAssetLoader().loadSound("move-self.mp3").getAudio().play();
     }
 
     @Override
@@ -138,7 +149,6 @@ public class ChessApplication extends GameApplication {
 
                 if (moveSuccessful) {
                     refreshLastMoveHighlights(clickedSquare);
-                    FXGL.getAssetLoader().loadSound("move-self.mp3").getAudio().play();
 
                     updateBoard();
                     if (gameController.isGameOver()) showGameOverDialog();
