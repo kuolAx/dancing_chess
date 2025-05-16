@@ -71,10 +71,12 @@ public class Board {
 
             // checks for legal castling are done in king move validation beforehand
             if (isKingCastlingMove(from, to, piece)) {
-                return moveRookForCastling(to, piece);
+                castleRook(to, piece.getColor());
             }
 
             updateCheckStatus();
+
+            piece.setMoved(true);
             return true;
         }
         return false;
@@ -161,19 +163,23 @@ public class Board {
                 || (E8 == from && (C8 == to || G8 == to));
     }
 
-    private boolean moveRookForCastling(Square to, Piece piece) {
-        return switch (piece.getColor()) {
-            case WHITE -> {
-                if (to == G1) yield movePiece(H1, F1, getPieceAt(H1));
-                if (to == C1) yield movePiece(A1, D1, getPieceAt(A1));
-                yield false;
-            }
-            case BLACK -> {
-                if (to == G8) yield movePiece(H8, F8, getPieceAt(H8));
-                if (to == C8) yield movePiece(A8, D8, getPieceAt(A8));
-                yield false;
-            }
-        };
+    private void castleRook(Square to, PieceColor playerColor) {
+        if (Objects.requireNonNull(playerColor) == WHITE) {
+            if (to == G1) moveAndUpdateRook(H1, F1);
+            if (to == C1) moveAndUpdateRook(A1, D1);
+        } else if (playerColor == BLACK) {
+            if (to == G8) moveAndUpdateRook(H8, F8);
+            if (to == C8) moveAndUpdateRook(A8, D8);
+        }
+    }
+
+    private void moveAndUpdateRook(Square rookFrom, Square rookTo) {
+        Piece rook = getPieceAt(rookFrom);
+        pieces.put(rookFrom, null);
+        pieces.put(rookTo, rook);
+
+        rook.setPosition(rookTo);
+        rook.setMoved(true);
     }
 }
 
