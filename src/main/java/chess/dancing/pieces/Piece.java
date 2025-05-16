@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -34,6 +36,10 @@ public class Piece {
 
     public boolean canMoveTo(Square from, Square to, ChessBoard board) {
         return type.getMoveValidator().isLegalMove(this, from, to, board);
+    }
+
+    public List<Square> getAllLegalMoves(Square from, ChessBoard board) {
+        return type.getMoveValidator().getAllLegalMoves(this, from, board);
     }
 
     public PieceState getState() {
