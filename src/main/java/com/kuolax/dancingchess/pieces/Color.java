@@ -1,4 +1,4 @@
-package chess.dancing.pieces;
+package com.kuolax.dancingchess.pieces;
 
 public enum Color {
     BLACK, WHITE

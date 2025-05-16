@@ -1,8 +1,8 @@
-package chess.dancing.board;
+package com.kuolax.dancingchess.board;
 
-import chess.dancing.pieces.Color;
-import chess.dancing.pieces.Piece;
-import chess.dancing.pieces.PieceType;
+import com.kuolax.dancingchess.pieces.Color;
+import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceType;
 import lombok.Getter;
 
 import java.util.EnumMap;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class ChessBoard {
+public class Board {
     private final Map<Square, Piece> pieces = new EnumMap<>(Square.class);
 
     public void initializeBoard() {
@@ -38,12 +38,11 @@ public class ChessBoard {
 
     public void movePiece(Square from, Square to) {
         Piece piece = pieces.get(from);
-
         if (piece == null) return;
 
         pieces.put(from, null);
         pieces.put(to, piece);
-        piece.setSquare(to);
+        // todo adapt to dancing (2 pieces on 1square check! - isInUnion or other)
     }
 
     public Piece getPieceAt(Square at) {
@@ -51,7 +50,8 @@ public class ChessBoard {
     }
 
     public void simulateMove(Square from, Square to) {
-        Piece piece = pieces.replace(from, null);
+        Piece piece = pieces.put(from, null);
+        if (piece == null) return;
         pieces.put(to, piece);
     }
 

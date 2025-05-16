@@ -1,10 +1,14 @@
-package chess.dancing.core;
+package com.kuolax.dancingchess.core;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 
 public class Application extends GameApplication {
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -20,9 +24,5 @@ public class Application extends GameApplication {
                 .at(400, 300)
                 .view(new javafx.scene.shape.Rectangle(40, 40, javafx.scene.paint.Color.BLUE))
                 .buildAndAttach();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
