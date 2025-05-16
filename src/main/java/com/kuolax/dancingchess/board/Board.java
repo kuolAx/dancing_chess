@@ -52,6 +52,7 @@ public class Board {
                     Piece piece = Piece.builder()
                             .type(type)
                             .color(color)
+                            .position(square)
                             .id(id)
                             .build();
 
@@ -80,6 +81,10 @@ public class Board {
 
     public Piece getPieceAt(Square at) {
         return pieces.get(at);
+    }
+
+    public boolean hasPieceAt(Square at) {
+        return getPieceAt(at) != null;
     }
 
     public List<Piece> getPiecesByColor(Color color) {
