@@ -5,14 +5,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.Spawns;
 import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceType;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.STANDARD_SQUARE_SIZE;
-import static javafx.scene.paint.Color.TRANSPARENT;
 
 public class ChessEntityFactory implements EntityFactory {
 
@@ -21,7 +21,9 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(EntityType.SQUARE)
                 .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE, STANDARD_SQUARE_SIZE, square.getSquareColor()))
+                .view(new Text(square.toString()))
                 .at(square.getSpawnX(), square.getSpawnY())
+                .opacity(0.5)
                 .build();
     }
 
@@ -29,16 +31,26 @@ public class ChessEntityFactory implements EntityFactory {
     public Entity spawnPiece(Piece piece, Square at) {
         return FXGL.entityBuilder()
                 .type(EntityType.PIECE)
-                .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE, STANDARD_SQUARE_SIZE, TRANSPARENT))
-                .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == Color.WHITE)))
+                .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE / 2, STANDARD_SQUARE_SIZE / 2, Color.color(0.5, 0.1, 0.7, 0.5)))
+                .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == com.kuolax.dancingchess.pieces.Color.WHITE)))
+                .anchorFromCenter()
                 .at(at.getSpawnX(), at.getSpawnY())
                 .build();
     }
 
-    @Spawns("piece")
+    @Spawns("highlight")
     public Entity spawnHighlight(Square at) {
-        return null;
-        // todo implement
+        Circle highlight = new Circle(STANDARD_SQUARE_SIZE / 3);
+        highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.4));
+        highlight.setCenterX(STANDARD_SQUARE_SIZE / 2);
+        highlight.setCenterY(STANDARD_SQUARE_SIZE / 2);
+
+        return FXGL.entityBuilder()
+                .type(EntityType.HIGHLIGHT)
+                .at(at.getSpawnX(), at.getSpawnY())
+                .view(highlight)
+                .zIndex(1)
+                .build();
     }
 
     private String getPieceSymbol(PieceType type, boolean isWhite) {
