@@ -43,11 +43,11 @@ public enum Square {
         double mouseX = event.getX();
         double mouseY = event.getY();
 
-        int boardX = (int) (mouseX / SQUARE_SIZE) + 1;
-        int boardY = 8 - (int) (mouseY / SQUARE_SIZE);
+        int file = (int) (mouseX / SQUARE_SIZE) + 1;
+        int rank = 8 - (int) (mouseY / SQUARE_SIZE);
 
-        if (boardX > 0 && boardX <= 8 && boardY > 0 && boardY <= 8) {
-            return Square.getByCoordinates(boardX, boardY);
+        if (file > 0 && file <= 8 && rank > 0 && rank <= 8) {
+            return Square.getByCoordinates(file, rank);
         }
         return null;
     }
