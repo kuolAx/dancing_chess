@@ -65,11 +65,11 @@ public abstract class AbstractMoveValidator implements MoveValidator {
 
     protected final boolean isVerticalPathClear(Board board, Square from, Square to) {
         int y = from.getY();
-        int startX = Math.min(from.getX(), to.getX());
+        int startX = Math.min(from.getX(), to.getX()) + 1;
         int endX = Math.max(from.getX(), to.getX());
 
         // check every square on the way, except start and target
-        for (int curX = startX + 1; curX < endX; curX++) {
+        for (int curX = startX; curX < endX; curX++) {
             if (board.getPieceAt(Square.getByCoordinates(curX, y)) != null) return false;
         }
 
