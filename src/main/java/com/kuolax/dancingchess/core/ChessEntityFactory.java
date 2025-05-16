@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 import static javafx.scene.paint.Color.DARKCYAN;
+import static javafx.scene.paint.Color.HOTPINK;
 import static javafx.scene.paint.Color.TRANSPARENT;
 
 public class ChessEntityFactory implements EntityFactory {
@@ -24,6 +25,18 @@ public class ChessEntityFactory implements EntityFactory {
                 .type(EntityType.SQUARE)
                 .viewWithBBox(new Rectangle(SQUARE_SIZE, SQUARE_SIZE, square.getSquareColor()))
                 .zIndex(0)
+                .at(square.getSpawnX(), square.getSpawnY())
+                .opacity(0.5)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("squareHighlight")
+    public Entity spawnLastMoveHighlight(Square square) {
+        return FXGL.entityBuilder()
+                .type(EntityType.LAST_MOVE_HIGHLIGHT)
+                .viewWithBBox(new Rectangle(SQUARE_SIZE, SQUARE_SIZE, HOTPINK))
+                .zIndex(1)
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
                 .anchorFromCenter()
@@ -44,13 +57,13 @@ public class ChessEntityFactory implements EntityFactory {
 
     @Spawns("highlight")
     public Entity spawnHighlight(Square at) {
-        Circle highlight = new Circle(SQUARE_SIZE / 3);
+        Circle highlight = new Circle(SQUARE_SIZE / 5);
         highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.4));
         highlight.setCenterX(SQUARE_SIZE / 2);
         highlight.setCenterY(SQUARE_SIZE / 2);
 
         return FXGL.entityBuilder()
-                .type(EntityType.HIGHLIGHT)
+                .type(EntityType.LEGAL_MOVE_HIGHLIGHT)
                 .at(at.getSpawnX(), at.getSpawnY())
                 .view(highlight)
                 .zIndex(3)
@@ -68,7 +81,7 @@ public class ChessEntityFactory implements EntityFactory {
         highlight.setCenterY(SQUARE_SIZE / 2);
 
         return FXGL.entityBuilder()
-                .type(EntityType.HIGHLIGHT)
+                .type(EntityType.SELECTED_PIECE_HIGHLIGHT)
                 .at(at.getSpawnX(), at.getSpawnY())
                 .view(highlight)
                 .zIndex(1)
