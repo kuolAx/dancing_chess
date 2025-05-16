@@ -14,22 +14,16 @@ import java.util.List;
 public class Piece {
 
     private final String id;
-
     private final PieceType type;
-
     private final Color color;
-
+    private Square position;
     private Piece dancePartner;
 
     private boolean isMoved;
 
     private boolean isInUnion;
 
-    public void resetDancePartner() {
-        dancePartner = null;
-    }
-
-    public boolean canMoveTo(Square from, Square to, Board board) {
+    public boolean isLegalMove(Square from, Square to, Board board) {
         return type.getMoveValidator().isLegalMove(this, from, to, board);
     }
 
@@ -41,11 +35,18 @@ public class Piece {
         };
     }
 
-    public List<Square> getAllLegalMoves(Square from, Board board) {
+    public List<Square> getLegalMoves(Board board) {
+        Square from = getPosition();
+
         List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
 
         return allLegalMoves.stream()
                 .filter(to -> !board.wouldMovePutKingInCheck(from, to, this))
                 .toList();
+    }
+
+    public boolean hasLegalMoves(Board board) {
+        return getLegalMoves(board).isEmpty();
+        // todo later optimize into MoveValidator for earlier return
     }
 }

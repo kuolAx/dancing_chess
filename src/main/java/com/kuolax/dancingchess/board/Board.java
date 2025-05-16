@@ -3,18 +3,21 @@ package com.kuolax.dancingchess.board;
 import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceType;
-import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.kuolax.dancingchess.pieces.Color.BLACK;
+import static com.kuolax.dancingchess.pieces.Color.WHITE;
 import static com.kuolax.dancingchess.pieces.PieceType.KING;
 
-@Getter
 public class Board {
+
     private final Map<Square, Piece> pieces = new EnumMap<>(Square.class);
+    private boolean whiteChecked;
+    private boolean blackChecked;
 
     public Board() {
         initializeBoard();
@@ -43,11 +46,14 @@ public class Board {
         }
     }
 
-    public boolean movePiece(Square from, Square to) {
-        if (isLegalMove(from, to)) {
+    public boolean movePiece(Square from, Square to, Piece piece) {
+        if (piece.isLegalMove(from, to, this)) {
             pieces.put(from, null);
             pieces.put(to, piece);
             piece.setMoved(true);
+            piece.setPosition(to);
+
+            updateCheckStatus();
             return true;
         }
         return false;
@@ -57,31 +63,29 @@ public class Board {
         return pieces.get(at);
     }
 
-    public boolean isCheck(Color kingColor) {
-        Square kingSquare = Arrays.stream(Square.values())
-                .filter(s -> getPieceAt(s).getType() == KING && getPieceAt(s).getColor() == kingColor)
-                .findAny()
-                .orElse(null);
-
-        return canAnyPieceTakeOn(kingSquare, kingColor);
-    }
-
-    public boolean isCheckMate(Color kingColor) {
-        Square kingSquare = Arrays.stream(Square.values())
-                .filter(s -> getPieceAt(s).getType() == KING && getPieceAt(s).getColor() == kingColor)
-                .findAny()
-                .orElse(null);
-
-        return getPieceAt(kingSquare).getAllLegalMoves(kingSquare, this).isEmpty();
-    }
-
-    public boolean canAnyPieceTakeOn(Square target, Color targetColor) {
-        if (target == null) return false;
-
+    public List<Piece> getPiecesByColor(Color color) {
         return Arrays.stream(Square.values())
-                .filter(s -> getPieceAt(s) != null && getPieceAt(s).getColor() != targetColor)
-                .filter(s -> getPieceAt(s).canTakeOn(s, target, this))
-                .toList().isEmpty();
+                .parallel()
+                .filter(s -> getPieceAt(s) != null)
+                .filter(s -> getPieceAt(s).getColor() == color)
+                .map(this::getPieceAt)
+                .toList();
+    }
+
+    public boolean isCheck(Color playerColor) {
+        Square kingSquare = getPiecesByColor(playerColor).parallelStream()
+                .filter(piece -> piece.getType() == KING)
+                .map(Piece::getPosition)
+                .findAny()
+                .orElse(null);
+
+        return canAnyPieceTakeOn(kingSquare, playerColor);
+    }
+
+    public boolean canAnyPieceTakeOn(Square target, Color playerColor) {
+        if (target == null) return false;
+        return getPiecesByColor((playerColor == WHITE) ? BLACK : WHITE).stream()
+                .anyMatch(piece -> piece.canTakeOn(piece.getPosition(), target, this));
     }
 
     public boolean wouldMovePutKingInCheck(Square from, Square to, Piece piece) {
@@ -91,8 +95,13 @@ public class Board {
         return isKingInCheck;
     }
 
-    private boolean isLegalMove(Square from, Square to) {
-        return piece.getType().getMoveValidator().isLegalMove(piece, from, to, this);
+    private void updateCheckStatus() {
+        whiteChecked = isCheck(WHITE);
+        blackChecked = isCheck(BLACK);
+    }
+
+    public boolean isChecked(Color playerColor) {
+        return (playerColor == WHITE) ? whiteChecked : blackChecked;
     }
 
     private void simulateMove(Square from, Square to) {

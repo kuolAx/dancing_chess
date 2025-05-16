@@ -5,7 +5,6 @@ import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.kuolax.dancingchess.moves.MoveType.determineStandardMoveType;
@@ -27,13 +26,10 @@ public abstract class AbstractMoveValidator implements MoveValidator {
 
     @Override
     public final List<Square> getAllLegalMoves(Piece piece, Square from, Board board) {
-        List<Square> legalMoves = new ArrayList<>();
         List<Square> potentialTargetSquares = getPotentialTargetSquares(from, board);
-
-        for (Square to : potentialTargetSquares) {
-            if (isLegalMove(piece, from, to, board)) legalMoves.add(to);
-        }
-        return legalMoves;
+        return potentialTargetSquares.stream()
+                .filter(to -> isLegalMove(piece, from, to, board))
+                .toList();
     }
 
     protected final boolean isPathClear(Square from, Square to, MoveType moveType, Board board) {
