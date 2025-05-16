@@ -128,7 +128,7 @@ public class ChessApplication extends GameApplication {
                 .collect(Collectors.partitioningBy(s -> gameController.getBoard().getPieceAt(s) == null));
 
         isTakingMoveMap.get(false)
-                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnTakeablePieceHighlight(at)));
+                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnTakeablePieceHighlightPolygons(at)));
         isTakingMoveMap.get(true)
                 .forEach(at -> getGameWorld().addEntity(entityFactory.spawnLegalMoveHighlight(at)));
     }
