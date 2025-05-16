@@ -8,7 +8,6 @@ import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -23,6 +22,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .type(EntityType.SQUARE)
                 .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE, STANDARD_SQUARE_SIZE, square.getSquareColor()))
                 .view(new Text(square.toString()))
+                .zIndex(0)
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
                 .anchorFromCenter()
@@ -33,9 +33,10 @@ public class ChessEntityFactory implements EntityFactory {
     public Entity spawnPiece(Piece piece, Square at) {
         return FXGL.entityBuilder()
                 .type(EntityType.PIECE)
-                .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE / 2, STANDARD_SQUARE_SIZE / 2, Color.color(0.5, 0.1, 0.7, 0.5)))
                 .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
-                .at(at.getSpawnX(), at.getSpawnY())
+                .at(at.getSpawnX() + 5, at.getSpawnY() + 70)
+                .scale(6, 6)
+                .zIndex(1)
                 .anchorFromCenter()
                 .build();
     }
@@ -51,7 +52,7 @@ public class ChessEntityFactory implements EntityFactory {
                 .type(EntityType.HIGHLIGHT)
                 .at(at.getSpawnX(), at.getSpawnY())
                 .view(highlight)
-                .zIndex(1)
+                .zIndex(2)
                 .anchorFromCenter()
                 .build();
     }

@@ -33,9 +33,11 @@ public class ChessApplication extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
-        settings.setHeight(800);
+        settings.setHeight(700);
         settings.setTitle("Dancing Chess (Chess with additional steps)");
         settings.setVersion("1.0");
+
+        settings.setDeveloperMenuEnabled(true);
     }
 
     @Override
