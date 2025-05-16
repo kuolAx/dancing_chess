@@ -17,7 +17,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
     protected abstract List<MoveType> getLegalMoveTypes();
 
     @Override
-    public final boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
+    public boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
         MoveType moveType = determineMoveType(from, to);
 
         return getLegalMoveTypes().contains(moveType)
@@ -93,9 +93,10 @@ public abstract class AbstractMoveValidator implements MoveValidator {
         return true;
     }
 
-    private boolean isEmptySquareOrCanTakeOnTargetSquare(Piece piece, Square to, Board board) {
+    protected final boolean isEmptySquareOrCanTakeOnTargetSquare(Piece piece, Square to, Board board) {
         Piece pieceAtTarget = board.getPieceAt(to);
         if (pieceAtTarget == null) return true;
+        // todo Pawn und King anders behandeln
 
         Color fromColor = piece.getColor();
         Color toColor = pieceAtTarget.getColor();
