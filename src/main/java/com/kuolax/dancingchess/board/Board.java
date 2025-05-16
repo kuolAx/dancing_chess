@@ -1,5 +1,7 @@
 package com.kuolax.dancingchess.board;
 
+import com.kuolax.dancingchess.moves.MoveType;
+import com.kuolax.dancingchess.moves.PawnMoveValidator;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
@@ -80,6 +82,12 @@ public class Board {
                 castleRook(to, playerColor);
                 isCastling = true;
             }
+            boolean isEnPassantCapture = false;
+            if (lastMove != null && lastMove.enPassantTarget() != null && piece.getType() == PAWN) {
+                MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(piece.getColor()), getEnPassantTarget());
+                isEnPassantCapture = pawnMoveType == MoveType.PAWN_EN_PASSANT;
+                if (isEnPassantCapture) pieces.put(getEnPassantTarget(), null);
+            }
 
             updateCheckStatus();
             piece.setMoved(true);
@@ -90,7 +98,7 @@ public class Board {
             Square enPassantSquare = (piece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? piece.getPosition() : null;
 
             lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves,
-                    !isCheck && hasNoLegalMoves, false, enPassantSquare, canPromote(piece, to), null);
+                    !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(piece, to), null);
 
             return true;
         }
@@ -182,7 +190,7 @@ public class Board {
         return (E1 == from && (C1 == to || G1 == to))
                 || (E8 == from && (C8 == to || G8 == to));
     }
-    
+
     public Square getEnPassantTarget() {
         if (lastMove != null) return lastMove.enPassantTarget();
         return null;
