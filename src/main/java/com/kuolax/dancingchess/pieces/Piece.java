@@ -39,13 +39,12 @@ public class Piece {
         List<Square> allLegalMoves = type.getMoveValidator().getAllLegalMoves(this, from, board);
 
         return allLegalMoves.stream()
-                .filter(to -> !board.wouldMovePutKingInCheck(from, to, this))
+                .filter(to -> !board.movePutsKingInCheck(from, to))
                 .toList();
     }
 
     public boolean hasLegalMoves(Board board) {
         return getLegalMoves(board).isEmpty();
-        // todo later optimize into MoveValidator for earlier return
     }
 
     public void setPosition(Square position) {
