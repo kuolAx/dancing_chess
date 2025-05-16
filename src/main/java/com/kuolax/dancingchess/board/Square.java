@@ -1,9 +1,9 @@
 package com.kuolax.dancingchess.board;
 
-import com.kuolax.dancingchess.pieces.Color;
+import com.kuolax.dancingchess.pieces.PieceColor;
 import lombok.Getter;
 
-import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 import static javafx.scene.paint.Color.BEIGE;
 import static javafx.scene.paint.Color.SADDLEBROWN;
 
@@ -61,7 +61,7 @@ public enum Square {
         return Math.abs(y - square.y);
     }
 
-    public boolean isOnLastRow(Color playerColor) {
+    public boolean isOnLastRow(PieceColor playerColor) {
         return playerColor == WHITE ? y == 8 : y == 1;
     }
 

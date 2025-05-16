@@ -2,8 +2,8 @@ package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 
 import java.util.List;
 
@@ -93,8 +93,8 @@ public abstract class AbstractMoveValidator implements MoveValidator {
         Piece pieceAtTarget = board.getPieceAt(to);
         if (pieceAtTarget == null) return true;
 
-        Color fromColor = piece.getColor();
-        Color toColor = pieceAtTarget.getColor();
+        PieceColor fromColor = piece.getColor();
+        PieceColor toColor = pieceAtTarget.getColor();
 
         return fromColor != toColor;
     }

@@ -6,6 +6,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.Spawns;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -32,7 +33,7 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(EntityType.PIECE)
                 .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE / 2, STANDARD_SQUARE_SIZE / 2, Color.color(0.5, 0.1, 0.7, 0.5)))
-                .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == com.kuolax.dancingchess.pieces.Color.WHITE)))
+                .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
                 .anchorFromCenter()
                 .at(at.getSpawnX(), at.getSpawnY())
                 .build();

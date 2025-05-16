@@ -15,7 +15,7 @@ public class Piece {
 
     private final String id;
     private final PieceType type;
-    private final Color color;
+    private final PieceColor color;
     private Square position;
     private Piece dancePartner;
     private boolean isMoved;

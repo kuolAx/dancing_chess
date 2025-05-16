@@ -2,8 +2,8 @@ package com.kuolax.dancingchess.core;
 
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
 import lombok.Getter;
 
@@ -17,8 +17,8 @@ import static com.kuolax.dancingchess.core.GameState.DRAW;
 import static com.kuolax.dancingchess.core.GameState.ONGOING;
 import static com.kuolax.dancingchess.core.GameState.STALEMATE;
 import static com.kuolax.dancingchess.core.GameState.WHITE_WINS;
-import static com.kuolax.dancingchess.pieces.Color.BLACK;
-import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static com.kuolax.dancingchess.pieces.PieceColor.BLACK;
+import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 import static com.kuolax.dancingchess.pieces.PieceType.PAWN;
 
 @Getter
@@ -26,7 +26,7 @@ public class GameController {
 
     private final List<MoveRecord> moveHistory;
     private Board board;
-    private Color currentPlayer;
+    private PieceColor currentPlayer;
     private int roundNumber;
     private GameState gameState;
 
@@ -111,7 +111,7 @@ public class GameController {
                 .anyMatch(moveRecordEntry -> moveRecordEntry.getValue() >= 3);
     }
 
-    private boolean hasLegalMoves(Color currentPlayer) {
+    private boolean hasLegalMoves(PieceColor currentPlayer) {
         List<Piece> pieces = board.getPiecesByColor(currentPlayer);
         return pieces.parallelStream()
                 .anyMatch(piece -> piece.hasLegalMoves(board));

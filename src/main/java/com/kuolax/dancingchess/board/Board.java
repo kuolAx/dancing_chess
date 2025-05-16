@@ -1,7 +1,7 @@
 package com.kuolax.dancingchess.board;
 
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 import com.kuolax.dancingchess.pieces.PieceType;
 
 import java.util.Arrays;
@@ -23,8 +23,8 @@ import static com.kuolax.dancingchess.board.Square.G1;
 import static com.kuolax.dancingchess.board.Square.G8;
 import static com.kuolax.dancingchess.board.Square.H1;
 import static com.kuolax.dancingchess.board.Square.H8;
-import static com.kuolax.dancingchess.pieces.Color.BLACK;
-import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static com.kuolax.dancingchess.pieces.PieceColor.BLACK;
+import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 import static com.kuolax.dancingchess.pieces.PieceType.KING;
 import static com.kuolax.dancingchess.pieces.PieceType.PAWN;
 
@@ -39,7 +39,7 @@ public class Board {
     }
 
     public void initializeBoard() {
-        for (Color color : Color.values()) {
+        for (PieceColor color : PieceColor.values()) {
             for (PieceType type : PieceType.values()) {
                 List<Square> startingSquares = type.getStartingSquares(color);
 
@@ -87,7 +87,7 @@ public class Board {
         return getPieceAt(at) != null;
     }
 
-    public List<Piece> getPiecesByColor(Color color) {
+    public List<Piece> getPiecesByColor(PieceColor color) {
         return Arrays.stream(Square.values())
                 .parallel()
                 .filter(s -> getPieceAt(s) != null)
@@ -96,7 +96,7 @@ public class Board {
                 .toList();
     }
 
-    public boolean isCheck(Color playerColor) {
+    public boolean isCheck(PieceColor playerColor) {
         Square kingSquare = getPiecesByColor(playerColor).parallelStream()
                 .filter(piece -> piece.getType() == KING)
                 .map(Piece::getPosition)
@@ -106,7 +106,7 @@ public class Board {
         return canAnyPieceTakeOn(kingSquare, playerColor);
     }
 
-    public boolean canAnyPieceTakeOn(Square target, Color playerColor) {
+    public boolean canAnyPieceTakeOn(Square target, PieceColor playerColor) {
         if (target == null) return false;
         return getPiecesByColor((playerColor == WHITE) ? BLACK : WHITE).stream()
                 .anyMatch(piece -> piece.canTakeOn(piece.getPosition(), target, this));
@@ -119,7 +119,7 @@ public class Board {
         return isKingInCheck;
     }
 
-    public boolean isChecked(Color playerColor) {
+    public boolean isChecked(PieceColor playerColor) {
         return (playerColor == WHITE) ? whiteChecked : blackChecked;
     }
 

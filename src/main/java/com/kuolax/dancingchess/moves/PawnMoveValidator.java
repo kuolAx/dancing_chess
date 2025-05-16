@@ -2,8 +2,8 @@ package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Color;
 import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.dancingchess.pieces.PieceColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,11 +12,11 @@ import static com.kuolax.dancingchess.moves.MoveType.PAWN_CAPTURE;
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_DOUBLE_FORWARD;
 import static com.kuolax.dancingchess.moves.MoveType.PAWN_SINGLE_FORWARD;
 import static com.kuolax.dancingchess.moves.MoveType.isPawnMove;
-import static com.kuolax.dancingchess.pieces.Color.WHITE;
+import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
 
 public class PawnMoveValidator extends AbstractMoveValidator {
 
-    public static int getPawnMoveDirection(Color pawnColor) {
+    public static int getPawnMoveDirection(PieceColor pawnColor) {
         return pawnColor == WHITE ? 1 : -1;
     }
 
@@ -36,7 +36,7 @@ public class PawnMoveValidator extends AbstractMoveValidator {
 
     @Override
     public boolean isLegalMove(Piece pawn, Square from, Square to, Board board) {
-        Color color = pawn.getColor();
+        PieceColor color = pawn.getColor();
         int direction = getPawnMoveDirection(color);
 
         MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, direction);
