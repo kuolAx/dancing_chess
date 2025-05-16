@@ -79,13 +79,13 @@ public class ChessApplication extends GameApplication {
 
         Board board = gameController.getBoard();
 
-        if (board.isChecked(currentPlayer) && board.getLastMove() != null && !board.getLastMove().isCheckmate()) {
+        if (board.isChecked(currentPlayer)) {
             gameWorld.addEntity(entityFactory.spawnCheckHighlight(board.getKingSquare(currentPlayer)));
         } else {
             gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         }
 
-        playCorrectSoundForLastMove(gameController.getBoard().getLastMove());
+        playSoundForLastMove(gameController.getBoard().getLastMove());
 
         Arrays.stream(Square.values())
                 .filter(s -> board.getPieceAt(s) != null)
@@ -95,7 +95,12 @@ public class ChessApplication extends GameApplication {
                 });
     }
 
-    private void playCorrectSoundForLastMove(Move lastMove) {
+    @Override
+    protected void initInput() {
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
+    }
+
+    private void playSoundForLastMove(Move lastMove) {
         if (lastMove == null) return;
 
         if (lastMove.isCheckmate() || lastMove.isStaleMate())
@@ -104,11 +109,6 @@ public class ChessApplication extends GameApplication {
         else if (lastMove.isCastling()) FXGL.getAssetLoader().loadSound("castle.mp3").getAudio().play();
         else if (lastMove.isPromotion()) FXGL.getAssetLoader().loadSound("promote.mp3").getAudio().play();
         else FXGL.getAssetLoader().loadSound("move-self.mp3").getAudio().play();
-    }
-
-    @Override
-    protected void initInput() {
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
     }
 
     private void handleMouseClick(MouseEvent mouseEvent) {
