@@ -49,8 +49,8 @@ public class GameController {
         boolean moveSuccessful = board.movePiece(from, to, piece);
 
         if (moveSuccessful) {
-            boolean isCheck = board.isChecked(currentPlayer);
-            boolean hasLegalMoves = hasLegalMoves(currentPlayer);
+            boolean isCheck = board.isChecked(currentPlayer == WHITE ? BLACK : WHITE);
+            boolean hasLegalMoves = hasLegalMoves(currentPlayer == WHITE ? BLACK : WHITE);
             boolean isCheckMate = isCheck && !hasLegalMoves;
             boolean isPromotion = false;
             boolean isCastling = false;
