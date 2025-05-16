@@ -14,7 +14,7 @@ public class KnightMoveValidator implements MoveValidator {
     };
 
     @Override
-    public boolean isLegalMove(Piece knight, Square from, Square to, ChessBoard board) {
+    public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
         return false;
     }
 

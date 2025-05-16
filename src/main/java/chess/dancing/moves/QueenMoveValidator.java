@@ -18,9 +18,9 @@ public class QueenMoveValidator implements MoveValidator {
     }
 
     @Override
-    public boolean isLegalMove(Piece queen, Square from, Square to, ChessBoard board) {
-        boolean isLegalRookMove = rookMoveValidator.isLegalMove(queen, from, to, board);
-        boolean isLegalBishopMove = bishopMoveValidator.isLegalMove(queen, from, to, board);
+    public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
+        boolean isLegalRookMove = rookMoveValidator.isLegalMove(piece, from, to, board);
+        boolean isLegalBishopMove = bishopMoveValidator.isLegalMove(piece, from, to, board);
         return isLegalRookMove || isLegalBishopMove;
     }
 
