@@ -118,6 +118,6 @@ public class GameController {
     }
 
     public boolean canPromote(Piece piece, Square to) {
-        return piece.getType() == PAWN && to.isOnLastRow(currentPlayer);
+        return piece.getType() == PAWN && to.isLastRow(piece.getColor());
     }
 }
