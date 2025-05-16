@@ -118,7 +118,7 @@ public class ChessEntityFactory implements EntityFactory {
 
         Group highlightGroup = new Group();
 
-        double triangleSize = SQUARE_SIZE / 4;
+        double triangleSize = SQUARE_SIZE / 3;
         Color highlightColor = Color.GRAY;
 
         Polygon topLeft = new Polygon(0, 0, triangleSize, 0, 0, triangleSize);

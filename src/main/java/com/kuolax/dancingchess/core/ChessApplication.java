@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.kuolax.dancingchess.board.Board;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -48,7 +49,9 @@ public class ChessApplication extends GameApplication {
         settings.setTitle("Dancing Chess (Chess with additional steps)");
         settings.setVersion("1.0");
 
-        settings.setDeveloperMenuEnabled(true);
+        settings.setDeveloperMenuEnabled(false);
+        settings.setMainMenuEnabled(false);
+        settings.setGameMenuEnabled(false);
     }
 
     @Override
@@ -82,9 +85,17 @@ public class ChessApplication extends GameApplication {
     }
 
     private void handleMouseClick(MouseEvent mouseEvent) {
-        Square clickedSquare = Square.getSquareByMousePosition(mouseEvent);
-        if (clickedSquare != null) {
-            processSquareClick(clickedSquare);
+        MouseButton button = mouseEvent.getButton();
+        if (button == MouseButton.PRIMARY) {
+            Square clickedSquare = Square.getSquareByMousePosition(mouseEvent);
+            if (clickedSquare != null) {
+                processSquareClick(clickedSquare);
+            }
+        } else if (button == MouseButton.SECONDARY) {
+            selectedPiece = null;
+            selectedSquare = null;
+            selectedPieceLegalMoves = null;
+            clearAllHighlights();
         }
     }
 
