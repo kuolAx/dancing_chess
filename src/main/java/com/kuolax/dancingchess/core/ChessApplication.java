@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
@@ -55,11 +57,8 @@ public class ChessApplication extends GameApplication {
         getGameWorld().addEntityFactory(entityFactory);
 
         Arrays.stream(Square.values())
-                .forEach(at -> {
-                    getGameWorld().addEntity(entityFactory.spawnSquare(at));
-                    getGameWorld().addEntity(entityFactory.spawnSquareText(at, new Text(at.toString())));
-                });
-
+                .forEach(at -> getGameWorld().addEntities(entityFactory.spawnSquare(at),
+                        entityFactory.spawnSquareText(at)));
         updateBoard();
         setupMousePositionTracker();
     }
@@ -103,7 +102,7 @@ public class ChessApplication extends GameApplication {
 
             selectedPieceLegalMoves = selectedPiece.getLegalMoves(gameController.getBoard());
             if (!selectedPieceLegalMoves.isEmpty()) {
-                selectedPieceLegalMoves.forEach(at -> getGameWorld().addEntity(entityFactory.spawnHighlight(at)));
+                setLegalMoveHighlights();
             }
         } else {
             // second click - move selected piece
@@ -124,6 +123,16 @@ public class ChessApplication extends GameApplication {
         }
     }
 
+    private void setLegalMoveHighlights() {
+        Map<Boolean, List<Square>> isTakingMoveMap = selectedPieceLegalMoves.stream()
+                .collect(Collectors.partitioningBy(s -> gameController.getBoard().getPieceAt(s) == null));
+
+        isTakingMoveMap.get(false)
+                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnTakeablePieceHighlight(at)));
+        isTakingMoveMap.get(true)
+                .forEach(at -> getGameWorld().addEntity(entityFactory.spawnLegalMoveHighlight(at)));
+    }
+
     private void refreshLastMoveHighlights(Square clickedSquare) {
         getGameWorld().getEntitiesByType(EntityType.LAST_MOVE_HIGHLIGHT).forEach(Entity::removeFromWorld);
         getGameWorld().addEntity(entityFactory.spawnLastMoveHighlight(selectedSquare));
@@ -131,7 +140,9 @@ public class ChessApplication extends GameApplication {
     }
 
     private void clearHighlights() {
-        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT, EntityType.SELECTED_PIECE_HIGHLIGHT)
+        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
+                        EntityType.SELECTED_PIECE_HIGHLIGHT,
+                        EntityType.TAKEABLE_PIECE_HIGHLIGHT)
                 .forEach(Entity::removeFromWorld);
     }
 
@@ -147,6 +158,7 @@ public class ChessApplication extends GameApplication {
         };
 
         getDialogService().showMessageBox(message, () -> {
+            clearAllHighlights();
             gameController.resetGame();
             updateBoard();
         });
@@ -188,5 +200,13 @@ public class ChessApplication extends GameApplication {
                     BOARD_X_OFFSET, BOARD_Y_OFFSET
             ));
         });
+    }
+
+    private void clearAllHighlights() {
+        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT,
+                        EntityType.SELECTED_PIECE_HIGHLIGHT,
+                        EntityType.TAKEABLE_PIECE_HIGHLIGHT,
+                        EntityType.LAST_MOVE_HIGHLIGHT)
+                .forEach(Entity::removeFromWorld);
     }
 }

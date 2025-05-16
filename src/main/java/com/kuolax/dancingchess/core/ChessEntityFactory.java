@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 import static javafx.scene.paint.Color.DARKCYAN;
+import static javafx.scene.paint.Color.DARKOLIVEGREEN;
 import static javafx.scene.paint.Color.HOTPINK;
 import static javafx.scene.paint.Color.TRANSPARENT;
 
@@ -55,8 +56,8 @@ public class ChessEntityFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("highlight")
-    public Entity spawnHighlight(Square at) {
+    @Spawns("legalMoveHighlight")
+    public Entity spawnLegalMoveHighlight(Square at) {
         Circle highlight = new Circle(SQUARE_SIZE / 5);
         highlight.setFill(javafx.scene.paint.Color.color(0.5, 0.5, 0.5, 0.4));
         highlight.setCenterX(SQUARE_SIZE / 2);
@@ -89,9 +90,27 @@ public class ChessEntityFactory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("takeablePieceHighlight")
+    public Entity spawnTakeablePieceHighlight(Square at) {
+        Circle highlight = new Circle(SQUARE_SIZE / 3 - 2);
+        highlight.setFill(TRANSPARENT);
+        highlight.setStroke(DARKOLIVEGREEN);
+        highlight.setStrokeWidth(5);
+        highlight.setCenterX(SQUARE_SIZE / 2);
+        highlight.setCenterY(SQUARE_SIZE / 2);
+
+        return FXGL.entityBuilder()
+                .type(EntityType.SELECTED_PIECE_HIGHLIGHT)
+                .at(at.getSpawnX(), at.getSpawnY())
+                .view(highlight)
+                .zIndex(1)
+                .anchorFromCenter()
+                .build();
+    }
+
 
     @Spawns("squareText")
-    public Entity spawnSquareText(Square square, Text text) {
+    public Entity spawnSquareText(Square square) {
         return FXGL.entityBuilder()
                 .type(EntityType.TEXT)
                 .view(new Text(square.toString()))
