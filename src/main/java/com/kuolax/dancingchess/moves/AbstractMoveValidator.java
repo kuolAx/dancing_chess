@@ -19,7 +19,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
     @Override
     public boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
         MoveType moveType = determineStandardMoveType(from, to);
-    
+
         return getLegalMoveTypes().contains(moveType)
                 && isPathClear(from, to, moveType, board)
                 && isEmptySquareOrCanTakeOnTargetSquare(piece, to, board);
@@ -36,7 +36,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
         return legalMoves;
     }
 
-    protected boolean isPathClear(Square from, Square to, MoveType moveType, Board board) {
+    protected final boolean isPathClear(Square from, Square to, MoveType moveType, Board board) {
         if (moveType == null) return false;
 
         return switch (moveType) {
