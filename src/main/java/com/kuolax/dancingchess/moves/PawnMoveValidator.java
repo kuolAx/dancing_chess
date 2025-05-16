@@ -1,6 +1,7 @@
 package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Board;
+import com.kuolax.dancingchess.board.Move;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
@@ -59,13 +60,21 @@ public class PawnMoveValidator extends AbstractMoveValidator {
             }
             case PAWN_CAPTURE -> {
                 Piece targetPiece = board.getPieceAt(to);
-                yield (targetPiece != null)
-                        && !pawn.isInUnion()
-                        && (targetPiece.getColor() != playerColor);
+                yield ((targetPiece != null) && !pawn.isInUnion() && (targetPiece.getColor() != playerColor))
+                        || isEnPassant(to, board, direction);
             }
             default -> false;
         };
 
         return isLegalMove && !board.movePutsKingInCheck(from, to);
+    }
+
+    private boolean isEnPassant(Square to, Board board, int direction) {
+        Move lastMove = board.getLastMove();
+        if (lastMove == null) return false;
+        Square enPassantTarget = lastMove.enPassantTarget();
+
+        return enPassantTarget != null
+                && enPassantTarget == Square.getByCoordinates(to.getX(), to.getY() - direction);
     }
 }

@@ -87,9 +87,10 @@ public class Board {
             PieceColor opponent = playerColor.getOpponent();
             boolean isCheck = isChecked(opponent);
             boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
-            
+            Square enPassantSquare = (piece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? piece.getPosition() : null;
+
             lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves,
-                    !isCheck && hasNoLegalMoves, null, canPromote(piece, to), null);
+                    !isCheck && hasNoLegalMoves, enPassantSquare, canPromote(piece, to), null);
 
             return true;
         }

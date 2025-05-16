@@ -13,3 +13,5 @@ getAllLegalMoves als Liste speichern und beim move nur noch prüfen, ob der Play
 
 support fen notation (export and import from/to fen String)
 add computer player for single player
+
+3 move repetition sollte den gesamten board state berücksichtigen (nachlesen, was zum draw führt in Schachregeln)
