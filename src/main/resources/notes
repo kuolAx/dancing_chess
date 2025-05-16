@@ -9,3 +9,7 @@ rechtsklick für Auswahl zuurücksetzen
 
 getAllLegalMoves als Liste speichern und beim move nur noch prüfen, ob der Player Move enthalten ist!
 ->  nicht erneut validieren! somit die single Methode islegalmove niemals direkt aufrufen!
+
+support fen notation (export and import from/to fen String
+add computer player for single player
+validate move validation with possible moves from position
