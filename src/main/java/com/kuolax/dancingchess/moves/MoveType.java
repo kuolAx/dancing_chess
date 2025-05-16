@@ -112,7 +112,7 @@ public enum MoveType {
 
     private static boolean isPawnDiagonalCapture(Square from, Square to, int direction) {
         return from.getXDiff(to) == 1
-                && from.getYDiff(to) == direction
+                && (to.getY() - from.getY()) == direction
                 && from.isDiagonalTo(to);
     }
 }
