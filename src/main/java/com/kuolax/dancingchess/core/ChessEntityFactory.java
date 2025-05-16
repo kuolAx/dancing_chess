@@ -6,7 +6,6 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.Spawns;
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -51,9 +50,11 @@ public class ChessEntityFactory implements EntityFactory {
 
     @Spawns("piece")
     public Entity spawnPiece(Piece piece, Square at) {
+        String fileName = piece.getColor() + "_" + piece.getType() + ".png";
         return FXGL.entityBuilder()
                 .type(PIECE)
-                .view("white_king.svg")
+                .view(fileName)
+                .scale(0.285, 0.285)
                 .at(at.getSpawnX(), at.getSpawnY())
                 .zIndex(2)
                 .anchorFromCenter()
@@ -130,17 +131,5 @@ public class ChessEntityFactory implements EntityFactory {
                 .opacity(0.3)
                 .anchorFromCenter()
                 .build();
-    }
-
-    // initial piece representation while no sprites are present yet
-    private String getPieceSymbol(PieceType type, boolean isWhite) {
-        return switch (type) {
-            case PAWN -> isWhite ? "♙" : "♟";
-            case KNIGHT -> isWhite ? "♘" : "♞";
-            case BISHOP -> isWhite ? "♗" : "♝";
-            case ROOK -> isWhite ? "♖" : "♜";
-            case QUEEN -> isWhite ? "♕" : "♛";
-            case KING -> isWhite ? "♔" : "♚";
-        };
     }
 }
