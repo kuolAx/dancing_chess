@@ -65,28 +65,22 @@ public abstract class AbstractMoveValidator implements MoveValidator {
     }
 
     protected final boolean isVerticalPathClear(Board board, Square from, Square to) {
-        int y = from.getY();
-        int startX = Math.min(from.getX(), to.getX()) + 1;
-        int endX = Math.max(from.getX(), to.getX());
+        int direction = Integer.compare(to.getY(), from.getY());
 
-        // check every square on the way, except start and target
-        for (int curX = startX; curX < endX; curX++) {
-            if (board.getPieceAt(Square.getByCoordinates(curX, y)) != null) return false;
+        for (int y = from.getY() + direction; y != to.getY(); y += direction) {
+            Square squareBetween = Square.getByCoordinates(from.getX(), y);
+            if (board.hasPieceAt(squareBetween)) return false;
         }
-
         return true;
     }
 
     protected final boolean isHorizontalPathClear(Board board, Square from, Square to) {
-        int x = from.getX();
-        int startY = Math.min(from.getY(), to.getY()) + 1;
-        int endY = Math.max(from.getY(), to.getY());
+        int direction = Integer.compare(to.getX(), from.getX());
 
-        // check every square on the way, except start and target
-        for (int curY = startY; curY < endY; curY++) {
-            if (board.getPieceAt(Square.getByCoordinates(x, curY)) != null) return false;
+        for (int x = from.getX() + direction; x != to.getX(); x += direction) {
+            Square squareBetween = Square.getByCoordinates(x, from.getY());
+            if (board.hasPieceAt(squareBetween)) return false;
         }
-
         return true;
     }
 
