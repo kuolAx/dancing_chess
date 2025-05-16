@@ -21,7 +21,6 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(EntityType.SQUARE)
                 .viewWithBBox(new Rectangle(STANDARD_SQUARE_SIZE, STANDARD_SQUARE_SIZE, square.getSquareColor()))
-                .view(new Text(square.toString()))
                 .zIndex(0)
                 .at(square.getSpawnX(), square.getSpawnY())
                 .opacity(0.5)
@@ -34,7 +33,7 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(EntityType.PIECE)
                 .view(new Text(getPieceSymbol(piece.getType(), piece.getColor() == PieceColor.WHITE)))
-                .at(at.getSpawnX() + 5, at.getSpawnY() + 70)
+                .at(at.getSpawnX() + 6, at.getSpawnY() + 70)
                 .scale(6, 6)
                 .zIndex(1)
                 .anchorFromCenter()
@@ -53,6 +52,18 @@ public class ChessEntityFactory implements EntityFactory {
                 .at(at.getSpawnX(), at.getSpawnY())
                 .view(highlight)
                 .zIndex(2)
+                .anchorFromCenter()
+                .build();
+    }
+
+    @Spawns("squareText")
+    public Entity spawnSquareText(Square square, Text text) {
+        return FXGL.entityBuilder()
+                .type(EntityType.TEXT)
+                .view(new Text(square.toString()))
+                .zIndex(0)
+                .at(square.getSpawnX() + 5, square.getSpawnY() + 80)
+                .opacity(0.3)
                 .anchorFromCenter()
                 .build();
     }
