@@ -4,6 +4,8 @@ move - animation
 en Passant mit last move ermöglichen
 pfeile zum calculaten mit rechtsklick zeichnen lassen
 
+use lichess checkmate sound
+
 flip table mit umlegbarem schalter und Animation
 Spielhistorie  mit Zügen
 Undo Funktion für Moves
