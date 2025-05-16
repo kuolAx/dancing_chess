@@ -68,37 +68,20 @@ public class Board {
         }
     }
 
-    public boolean movePiece(Square from, Square to, Piece piece) {
-        if (piece.isLegalMove(from, to, this)) {
+    public boolean movePiece(Square from, Square to, Piece movingPiece) {
+        if (movingPiece.isLegalMove(from, to, this)) {
             pieces.put(from, null);
-            pieces.put(to, piece);
-            piece.setPosition(to);
+            Piece takenPiece = pieces.put(to, movingPiece);
 
-            PieceColor playerColor = piece.getColor();
+            movingPiece.setPosition(to);
+            movingPiece.setMoved(true);
 
             // checks for legal castling are done in king move validation beforehand
-            boolean isCastling = false;
-            if (isKingCastlingMove(from, to, piece)) {
-                castleRook(to, playerColor);
-                isCastling = true;
-            }
-            boolean isEnPassantCapture = false;
-            if (lastMove != null && lastMove.enPassantTarget() != null && piece.getType() == PAWN) {
-                MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(piece.getColor()), getEnPassantTarget());
-                isEnPassantCapture = pawnMoveType == MoveType.PAWN_EN_PASSANT;
-                if (isEnPassantCapture) pieces.put(getEnPassantTarget(), null);
-            }
+            if (isKingCastlingMove(from, to, movingPiece)) castleRook(to, movingPiece.getColor());
+            if (isEnPassantCapture(from, to, movingPiece)) pieces.put(getEnPassantTarget(), null);
 
             updateCheckStatus();
-            piece.setMoved(true);
-
-            PieceColor opponent = playerColor.getOpponent();
-            boolean isCheck = isChecked(opponent);
-            boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
-            Square enPassantSquare = (piece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? piece.getPosition() : null;
-
-            lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves,
-                    !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(piece, to), null);
+            updateLastMove(movingPiece, from, to, takenPiece);
 
             return true;
         }
@@ -142,6 +125,7 @@ public class Board {
 
         boolean isKingInCheck = isCheck(piece.getColor());
 
+        // reset simulated move
         pieces.put(to, cashedPiece);
         pieces.put(from, piece);
         piece.setPosition(from);
@@ -196,9 +180,36 @@ public class Board {
         return null;
     }
 
+    private boolean canPromote(Piece piece, Square to) {
+        return piece.getType() == PAWN && to.isOnLastRow(piece.getColor());
+    }
+
     private void updateCheckStatus() {
         whiteChecked = isCheck(WHITE);
         blackChecked = isCheck(BLACK);
+    }
+
+    private void updateLastMove(Piece movingPiece, Square from, Square to, Piece takenPiece) {
+        PieceColor playerColor = movingPiece.getColor();
+        PieceColor opponent = playerColor.getOpponent();
+
+        boolean isTakingMove = takenPiece != null;
+        boolean isCheck = isChecked(opponent);
+        boolean isCastling = isKingCastlingMove(from, to, movingPiece);
+        boolean isEnPassantCapture = isEnPassantCapture(from, to, movingPiece);
+        boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
+        Square enPassantSquare = (movingPiece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? movingPiece.getPosition() : null;
+
+        lastMove = new Move(movingPiece, from, to, isTakingMove, isCheck, isCastling, isCheck && hasNoLegalMoves,
+                !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(movingPiece, to), null);
+    }
+
+    private boolean isEnPassantCapture(Square from, Square to, Piece movingPiece) {
+        if (lastMove != null && lastMove.enPassantTarget() != null && movingPiece.getType() == PAWN) {
+            MoveType pawnMoveType = MoveType.determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(movingPiece.getColor()), getEnPassantTarget());
+            return pawnMoveType == MoveType.PAWN_EN_PASSANT;
+        }
+        return false;
     }
 
     private void castleRook(Square to, PieceColor playerColor) {
@@ -218,10 +229,6 @@ public class Board {
 
         rook.setPosition(rookTo);
         rook.setMoved(true);
-    }
-
-    private boolean canPromote(Piece piece, Square to) {
-        return piece.getType() == PAWN && to.isOnLastRow(piece.getColor());
     }
 }
 
