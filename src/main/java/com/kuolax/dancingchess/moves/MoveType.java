@@ -2,6 +2,7 @@ package com.kuolax.dancingchess.moves;
 
 import com.kuolax.dancingchess.board.Square;
 import com.kuolax.dancingchess.pieces.Color;
+import com.kuolax.dancingchess.pieces.Piece;
 
 import static com.kuolax.dancingchess.board.Square.C1;
 import static com.kuolax.dancingchess.board.Square.C8;
@@ -18,9 +19,18 @@ public enum MoveType {
     PAWN_SINGLE_FORWARD,
     PAWN_DOUBLE_FORWARD,
     PAWN_CAPTURE,
+    PAWN_EN_PASSANT,
     KING_MOVE,
     KING_CASTLE_SHORT,
     KING_CASTLE_LONG;
+
+    public static MoveType determineMoveType(Piece piece, Square from, Square to) {
+        return switch (piece.getType()) {
+            case QUEEN, KNIGHT, ROOK, BISHOP -> determineStandardMoveType(from, to);
+            case KING -> determineKingMoveType(from, to, piece.getColor());
+            case PAWN -> determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(piece.getColor()));
+        };
+    }
 
     public static MoveType determineStandardMoveType(Square from, Square to) {
         if (from.isHorizontalTo(to)) return HORIZONTAL;

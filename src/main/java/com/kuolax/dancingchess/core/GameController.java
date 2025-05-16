@@ -115,7 +115,6 @@ public class GameController {
     }
 
     private PieceType triggerPromotion(Piece pawn, Square position) {
-        // todo implement user interaction
         PieceType promotionType = PieceType.QUEEN;
         board.promotePawn(pawn, promotionType, position);
         return promotionType;
