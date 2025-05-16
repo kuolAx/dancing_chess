@@ -75,7 +75,7 @@ public enum Square {
         return Math.abs(y - square.y);
     }
 
-    public boolean isLastRow(PieceColor playerColor) {
+    public boolean isOnLastRow(PieceColor playerColor) {
         return playerColor == WHITE ? y == 8 : y == 1;
     }
 

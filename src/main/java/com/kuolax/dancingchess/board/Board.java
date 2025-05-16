@@ -204,7 +204,7 @@ public class Board {
     }
 
     private boolean canPromote(Piece piece, Square to) {
-        return piece.getType() == PAWN && to.isLastRow(piece.getColor());
+        return piece.getType() == PAWN && to.isOnLastRow(piece.getColor());
     }
 }
 
