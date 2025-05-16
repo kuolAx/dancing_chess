@@ -46,11 +46,11 @@ public enum Square {
     }
 
     public boolean isHorizontalTo(Square square) {
-        return x == square.x;
+        return y == square.y;
     }
 
     public boolean isVerticalTo(Square square) {
-        return y == square.y;
+        return x == square.x;
     }
 
     public int getXDiff(Square square) {
