@@ -84,9 +84,12 @@ public class Board {
             updateCheckStatus();
             piece.setMoved(true);
 
-            boolean isCheck = isChecked(playerColor.getOpponent());
-            lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves(playerColor.getOpponent()),
-                    null, canPromote(piece, to), null);
+            PieceColor opponent = playerColor.getOpponent();
+            boolean isCheck = isChecked(opponent);
+            boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
+            
+            lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves,
+                    !isCheck && hasNoLegalMoves, null, canPromote(piece, to), null);
 
             return true;
         }

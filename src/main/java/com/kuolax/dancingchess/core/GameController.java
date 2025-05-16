@@ -69,7 +69,7 @@ public class GameController {
 
     private void switchPlayer() {
         currentPlayer = opponent;
-        opponent = (currentPlayer == WHITE) ? BLACK : WHITE;
+        opponent = currentPlayer.getOpponent();
         if (currentPlayer == WHITE) roundNumber++;
     }
 
@@ -78,7 +78,7 @@ public class GameController {
             gameState = DRAW;
         else if (lastMove.isCheckmate())
             gameState = (currentPlayer == WHITE) ? BLACK_WINS : WHITE_WINS;
-        else if (!lastMove.isCheck() && board.hasNoLegalMoves(opponent))
+        else if (lastMove.isStaleMate())
             gameState = STALEMATE;
         else
             gameState = ONGOING;
