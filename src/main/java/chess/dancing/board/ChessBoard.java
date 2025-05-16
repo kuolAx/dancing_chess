@@ -36,11 +36,30 @@ public class ChessBoard {
         }
     }
 
+    public void movePiece(Square from, Square to) {
+        Piece piece = pieces.replace(from, null);
+
+        if (piece == null) return;
+
+        piece.setSquare(to);
+        pieces.put(to, piece);
+    }
+
+    public void simulateMove(Square from, Square to) {
+        Piece piece = pieces.replace(from, null);
+        pieces.put(to, piece);
+    }
+
     public boolean isLegalMove(Square from, Square to) {
         Piece piece = pieces.get(from);
         if (piece == null) return false;
 
         return piece.getType().getMoveValidator().isLegalMove(piece, from, to, this);
+    }
+
+    public boolean isKingInCheck(Color c) {
+        // todo implement
+        return false;
     }
 }
 

@@ -17,9 +17,11 @@ public class RookMoveValidator implements MoveValidator {
     public List<Square> getAllLegalMoves(Piece piece, Square from, ChessBoard board) {
         List<Square> legalMoves = new ArrayList<>();
 
-        for (Square square : Square.values()) {
-            if (square.isInColumnWith(from) || square.isInRowWith(from))
-                legalMoves.add(square);
+        // todo only check squares relevant for rook movement
+        for (Square to : Square.values()) {
+            if (to.isInColumnWith(from) || to.isInRowWith(from))
+                // todo filter moves blocked by same color or blocked by taking opposite color piece
+                legalMoves.add(to);
         }
 
         return legalMoves;

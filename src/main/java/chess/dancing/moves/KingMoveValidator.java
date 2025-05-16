@@ -9,7 +9,7 @@ import java.util.List;
 
 public class KingMoveValidator implements MoveValidator {
     @Override
-    public boolean isLegalMove(Piece piece, Square from, Square to, ChessBoard board) {
+    public boolean isLegalMove(Piece king, Square from, Square to, ChessBoard board) {
         int rowDiff = from.getRowDiff(to);
         int colDiff = from.getColumnDiff(to);
 
@@ -17,7 +17,7 @@ public class KingMoveValidator implements MoveValidator {
         boolean normalMove = rowDiff <= 1 && colDiff <= 1 && (rowDiff > 0 || colDiff > 0);
 
         // castling move
-        boolean castling = isCastlingMove(piece, from, to, board);
+        boolean castling = isCastlingMove(king, from, to, board);
 
         return normalMove || castling;
     }
@@ -28,11 +28,11 @@ public class KingMoveValidator implements MoveValidator {
     }
 
     @Override
-    public List<Square> getAllLegalMoves(Piece piece, Square from, ChessBoard board) {
+    public List<Square> getAllLegalMoves(Piece king, Square from, ChessBoard board) {
         List<Square> legalMoves = new ArrayList<>();
 
         for (Square square : Square.values()) {
-            if (isLegalMove(piece, from, square, board)) {
+            if (isLegalMove(king, from, square, board)) {
                 legalMoves.add(square);
             }
         }
