@@ -89,7 +89,6 @@ public class Board {
 
     public List<Piece> getPiecesByColor(PieceColor color) {
         return Arrays.stream(Square.values())
-                .parallel()
                 .filter(s -> getPieceAt(s) != null)
                 .filter(s -> getPieceAt(s).getColor() == color)
                 .map(this::getPieceAt)
@@ -97,12 +96,12 @@ public class Board {
     }
 
     public boolean isCheck(PieceColor playerColor) {
-        Square kingSquare = getPiecesByColor(playerColor).parallelStream()
+        Square kingSquare = getPiecesByColor(playerColor).stream()
                 .filter(piece -> piece.getType() == KING)
                 .map(Piece::getPosition)
                 .findAny()
                 .orElse(null);
-
+        
         return canAnyPieceTakeOn(kingSquare, playerColor);
     }
 
@@ -113,9 +112,10 @@ public class Board {
     }
 
     public boolean movePutsKingInCheck(Square from, Square to) {
+        // simulate move and determine check status for new position
         Piece piece = pieces.put(from, null);
         if (piece == null) return false;
-        
+
         Piece cashedPiece = pieces.put(to, piece);
 
         boolean isKingInCheck = isCheck(piece.getColor());
