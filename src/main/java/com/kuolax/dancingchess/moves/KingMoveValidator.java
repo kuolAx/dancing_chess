@@ -55,7 +55,7 @@ public class KingMoveValidator extends AbstractMoveValidator {
         if (kingMoveType == null) return false;
 
         boolean isLegalMove = switch (kingMoveType) {
-            case KING_MOVE -> board.getPieceAt(to) == null; // king can't take/create union
+            case KING_MOVE -> board.getPieceAt(to) == null || board.getPieceAt(to).getColor() != king.getColor();
             case KING_CASTLE_SHORT -> isCastlingConditionsMet(king, board, kingColor, KING_CASTLE_SHORT);
             case KING_CASTLE_LONG -> isCastlingConditionsMet(king, board, kingColor, KING_CASTLE_LONG);
             default -> false;
