@@ -24,11 +24,12 @@ public enum MoveType {
     KING_CASTLE_SHORT,
     KING_CASTLE_LONG;
 
-    public static MoveType determineMoveType(Piece piece, Square from, Square to) {
+    public static MoveType determineMoveType(Piece piece, Square from, Square to, Square enPassantTarget) {
         return switch (piece.getType()) {
             case QUEEN, KNIGHT, ROOK, BISHOP -> determineStandardMoveType(from, to);
             case KING -> determineKingMoveType(from, to, piece.getColor());
-            case PAWN -> determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(piece.getColor()));
+            case PAWN ->
+                    determinePawnMoveType(from, to, PawnMoveValidator.getPawnMoveDirection(piece.getColor()), enPassantTarget);
         };
     }
 
@@ -82,10 +83,15 @@ public enum MoveType {
         };
     }
 
-    public static MoveType determinePawnMoveType(Square from, Square to, int direction) {
-        if (isPawnSingleForward(from, to, direction)) return PAWN_SINGLE_FORWARD;
-        else if (isPawnDoubleForward(from, to, direction)) return PAWN_DOUBLE_FORWARD;
-        else if (isPawnDiagonalCapture(from, to, direction)) return PAWN_CAPTURE;
+    public static MoveType determinePawnMoveType(Square from, Square to, int direction, Square enPassantTarget) {
+        if (isPawnSingleForward(from, to, direction))
+            return PAWN_SINGLE_FORWARD;
+        else if (isPawnDoubleForward(from, to, direction))
+            return PAWN_DOUBLE_FORWARD;
+        else if (isPawnDiagonalCapture(from, to, direction) && isPawnEnPassant(to, direction, enPassantTarget))
+            return PAWN_EN_PASSANT;
+        else if (isPawnDiagonalCapture(from, to, direction))
+            return PAWN_CAPTURE;
 
         return null;
     }
@@ -113,5 +119,10 @@ public enum MoveType {
         return from.getXDiff(to) == 1
                 && (to.getY() - from.getY()) == direction
                 && from.isDiagonalTo(to);
+    }
+
+    private static boolean isPawnEnPassant(Square to, int direction, Square enPassantTarget) {
+        return enPassantTarget != null
+                && enPassantTarget == Square.getByCoordinates(to.getX(), to.getY() - direction);
     }
 }

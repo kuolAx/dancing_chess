@@ -90,7 +90,7 @@ public class Board {
             Square enPassantSquare = (piece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? piece.getPosition() : null;
 
             lastMove = new Move(piece, from, to, isCheck, isCastling, isCheck && hasNoLegalMoves,
-                    !isCheck && hasNoLegalMoves, enPassantSquare, canPromote(piece, to), null);
+                    !isCheck && hasNoLegalMoves, false, enPassantSquare, canPromote(piece, to), null);
 
             return true;
         }
@@ -181,6 +181,11 @@ public class Board {
         if (piece.getType() != KING) return false;
         return (E1 == from && (C1 == to || G1 == to))
                 || (E8 == from && (C8 == to || G8 == to));
+    }
+    
+    public Square getEnPassantTarget() {
+        if (lastMove != null) return lastMove.enPassantTarget();
+        return null;
     }
 
     private void updateCheckStatus() {
