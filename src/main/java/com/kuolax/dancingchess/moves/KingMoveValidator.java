@@ -7,6 +7,7 @@ import com.kuolax.dancingchess.pieces.PieceColor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.kuolax.dancingchess.board.Square.A1;
 import static com.kuolax.dancingchess.board.Square.A8;
@@ -48,23 +49,21 @@ public class KingMoveValidator extends AbstractMoveValidator {
         MoveType kingMoveType = MoveType.determineKingMoveType(from, to, kingColor);
         if (kingMoveType == null) return false;
 
-        return switch (kingMoveType) {
-            case KING_MOVE -> {
-                if (board.getPieceAt(to) != null) yield false; // king can't take/create union
-                yield !board.movePutsKingInCheck(from, to);
-            }
-            case KING_CASTLE_SHORT -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_SHORT);
-            case KING_CASTLE_LONG -> isCastlingConditionsMet(king, from, to, board, kingColor, KING_CASTLE_LONG);
+        boolean isLegalMove = switch (kingMoveType) {
+            case KING_MOVE -> board.getPieceAt(to) == null; // king can't take/create union
+            case KING_CASTLE_SHORT -> isCastlingConditionsMet(king, board, kingColor, KING_CASTLE_SHORT);
+            case KING_CASTLE_LONG -> isCastlingConditionsMet(king, board, kingColor, KING_CASTLE_LONG);
             default -> false;
         };
+
+        return isLegalMove && !board.movePutsKingInCheck(from, to);
     }
 
-    private boolean isCastlingConditionsMet(Piece king, Square from, Square to, Board board, PieceColor kingColor, MoveType moveType) {
+    private boolean isCastlingConditionsMet(Piece king, Board board, PieceColor kingColor, MoveType moveType) {
         if (king.isMoved()) return false;
         if (hasRookMovedBeforeCastling(board, kingColor, moveType)) return false;
         if (isCastlingPathBlocked(moveType, kingColor, board)) return false;
         if (board.isCheck(kingColor)) return false;
-        if (board.movePutsKingInCheck(from, to)) return false;
         return !castlingSquaresAreAttacked(board, kingColor, moveType);
     }
 
@@ -113,21 +112,14 @@ public class KingMoveValidator extends AbstractMoveValidator {
     private boolean isCastlingPathBlocked(MoveType moveType, PieceColor color, Board board) {
         if (moveType == KING_CASTLE_SHORT) {
             return switch (color) {
-                case WHITE -> isSquareBlocked(board, F1, G1);
-                case BLACK -> isSquareBlocked(board, F8, G8);
+                case WHITE -> Stream.of(F1, G1).anyMatch(board::hasPieceAt);
+                case BLACK -> Stream.of(F8, G8).anyMatch(board::hasPieceAt);
             };
         } else if (moveType == KING_CASTLE_LONG) {
             return switch (color) {
-                case WHITE -> isSquareBlocked(board, D1, C1, B1);
-                case BLACK -> isSquareBlocked(board, D8, C8, B8);
+                case WHITE -> Stream.of(D1, C1, B1).anyMatch(board::hasPieceAt);
+                case BLACK -> Stream.of(D8, C8, B8).anyMatch(board::hasPieceAt);
             };
-        }
-        return false;
-    }
-
-    private boolean isSquareBlocked(Board board, Square... squares) {
-        for (Square square : squares) {
-            if (board.getPieceAt(square) != null) return true;
         }
         return false;
     }
