@@ -1,13 +1,12 @@
 todo
 
 move - animation
+en Passant
+pfeile zum calculaten mit rechtsklick zeichnen lassen
 
 flip table mit umlegbarem schalter und Animation
 Spielhistorie  mit Zügen
 Undo Funktion für Moves
-en Passant
-
-pfeile zum calculaten mit rechtsklick zeichnen lassen
 
 getAllLegalMoves als Liste speichern und beim move nur noch prüfen, ob der Player Move enthalten ist!
 -> nicht erneut validieren! somit die single Methode islegalmove niemals direkt aufrufen!

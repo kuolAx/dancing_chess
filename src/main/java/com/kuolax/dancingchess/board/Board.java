@@ -99,13 +99,7 @@ public class Board {
     }
 
     public boolean isCheck(PieceColor playerColor) {
-        Square kingSquare = getPiecesByColor(playerColor).stream()
-                .filter(piece -> piece.getType() == KING)
-                .map(Piece::getPosition)
-                .findAny()
-                .orElse(null);
-
-        return canAnyPieceTakeOn(kingSquare, playerColor);
+        return canAnyPieceTakeOn(getKingSquare(playerColor), playerColor);
     }
 
     public boolean canAnyPieceTakeOn(Square target, PieceColor playerColor) {
@@ -182,6 +176,14 @@ public class Board {
 
         rook.setPosition(rookTo);
         rook.setMoved(true);
+    }
+
+    public Square getKingSquare(PieceColor playerColor) {
+        return getPiecesByColor(playerColor).stream()
+                .filter(piece -> piece.getType() == KING)
+                .map(Piece::getPosition)
+                .findAny()
+                .orElse(null);
     }
 }
 

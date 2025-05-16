@@ -14,12 +14,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
+import static com.kuolax.dancingchess.core.EntityType.CHECK_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.LAST_MOVE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.LEGAL_MOVE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.PIECE;
 import static com.kuolax.dancingchess.core.EntityType.SELECTED_PIECE_HIGHLIGHT;
 import static com.kuolax.dancingchess.core.EntityType.SQUARE;
 import static com.kuolax.dancingchess.core.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
+import static javafx.scene.paint.Color.DARKRED;
 import static javafx.scene.paint.Color.HOTPINK;
 
 public class ChessEntityFactory implements EntityFactory {
@@ -89,6 +91,24 @@ public class ChessEntityFactory implements EntityFactory {
                 .anchorFromCenter()
                 .build();
     }
+
+    @Spawns("checkHighlight")
+    public Entity spawnCheckHighlight(Square at) {
+        Circle highlight = new Circle(SQUARE_SIZE / 2.5);
+        highlight.setFill(DARKRED);
+        highlight.setCenterX(SQUARE_SIZE / 2);
+        highlight.setCenterY(SQUARE_SIZE / 2);
+
+        return FXGL.entityBuilder()
+                .type(CHECK_HIGHLIGHT)
+                .at(at.getSpawnX(), at.getSpawnY())
+                .view(highlight)
+                .zIndex(3)
+                .opacity(0.35)
+                .anchorFromCenter()
+                .build();
+    }
+
 
     @Spawns("takeablePieceHighlightPolygons")
     public Entity spawnTakeablePieceHighlightPolygons(Square at) {
