@@ -18,9 +18,7 @@ public class Piece {
     private final Color color;
     private Square position;
     private Piece dancePartner;
-
     private boolean isMoved;
-
     private boolean isInUnion;
 
     public boolean isLegalMove(Square from, Square to, Board board) {
@@ -48,5 +46,10 @@ public class Piece {
     public boolean hasLegalMoves(Board board) {
         return getLegalMoves(board).isEmpty();
         // todo later optimize into MoveValidator for earlier return
+    }
+
+    public void setPosition(Square position) {
+        this.position = position;
+        isMoved = true;
     }
 }
