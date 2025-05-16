@@ -7,18 +7,27 @@ public enum MoveType {
     VERTICAL,
     DIAGONAL,
     KNIGHT_MOVE,
-    PAWN_FORWARD,
+    PAWN_SINGLE_FORWARD,
+    PAWN_DOUBLE_FORWARD,
     PAWN_CAPTURE,
     CASTLE_LONG,
     CASTLE_SHORT;
 
-    public static MoveType determineMoveType(Square from, Square to) {
+    public static MoveType determineStandardMoveType(Square from, Square to) {
         if (from.isHorizontalTo(to)) return HORIZONTAL;
         else if (from.isVerticalTo(to)) return VERTICAL;
         else if (from.isDiagonalTo(to)) return DIAGONAL;
         else if (isKnightMove(from, to)) return KNIGHT_MOVE;
-        // todo Pawn and Castle Type detection
-        throw new IllegalArgumentException("no legal move type detected.");
+
+        return null;
+    }
+
+    public static MoveType determinePawnMoveType(Square from, Square to, int direction) {
+        if (isPawnSingleForward(from, to, direction)) return PAWN_SINGLE_FORWARD;
+        else if (isPawnDoubleForward(from, to, direction)) return PAWN_DOUBLE_FORWARD;
+        else if (isPawnDiagonalCapture(from, to, direction)) return PAWN_CAPTURE;
+
+        return null;
     }
 
     public static boolean isKnightMove(Square from, Square to) {
@@ -26,5 +35,32 @@ public enum MoveType {
         int yDiff = Math.abs(from.getY() - to.getY());
 
         return (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
+    }
+
+    public static boolean isPawnMove(Square from, Square to, int direction) {
+        return isPawnSingleForward(from, to, direction)
+                || isPawnDoubleForward(from, to, direction)
+                || isPawnDiagonalCapture(from, to, direction);
+    }
+
+    private static boolean isPawnSingleForward(Square from, Square to, int direction) {
+        // todo fix logic
+        return from.isVerticalTo(to) &&
+                to.getX() == from.getX() + direction;
+    }
+
+    private static boolean isPawnDoubleForward(Square from, Square to, int direction) {
+        boolean isFirstOrSecondRank = (direction == 1 && from.getX() <= 2) || (direction == -1 && from.getX() >= 6);
+
+        // todo fix logic
+        return isFirstOrSecondRank
+                && to.getX() == from.getX() + (direction * 2)
+                && from.isVerticalTo(to);
+    }
+
+    private static boolean isPawnDiagonalCapture(Square from, Square to, int direction) {
+        return to.getX() == from.getX() + direction
+                && from.getYDiff(to) == 1
+                && from.isDiagonalTo(to);
     }
 }

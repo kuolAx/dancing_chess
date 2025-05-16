@@ -8,7 +8,7 @@ import com.kuolax.dancingchess.pieces.Piece;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.kuolax.dancingchess.moves.MoveType.determineMoveType;
+import static com.kuolax.dancingchess.moves.MoveType.determineStandardMoveType;
 
 public abstract class AbstractMoveValidator implements MoveValidator {
 
@@ -18,10 +18,10 @@ public abstract class AbstractMoveValidator implements MoveValidator {
 
     @Override
     public boolean isLegalMove(Piece piece, Square from, Square to, Board board) {
-        MoveType moveType = determineMoveType(from, to);
-
+        MoveType moveType = determineStandardMoveType(from, to);
+    
         return getLegalMoveTypes().contains(moveType)
-                && isPathClear(from, to, board)
+                && isPathClear(from, to, moveType, board)
                 && isEmptySquareOrCanTakeOnTargetSquare(piece, to, board);
     }
 
@@ -36,8 +36,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
         return legalMoves;
     }
 
-    protected boolean isPathClear(Square from, Square to, Board board) {
-        MoveType moveType = determineMoveType(from, to);
+    protected boolean isPathClear(Square from, Square to, MoveType moveType, Board board) {
         if (moveType == null) return false;
 
         return switch (moveType) {
@@ -97,6 +96,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
         Piece pieceAtTarget = board.getPieceAt(to);
         if (pieceAtTarget == null) return true;
         // todo Pawn und King anders behandeln
+        // todo wenn schlagbare Figur vorhanden, dann muss vorhandene Union geprüft werden
 
         Color fromColor = piece.getColor();
         Color toColor = pieceAtTarget.getColor();
