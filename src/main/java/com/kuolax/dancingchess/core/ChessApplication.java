@@ -79,7 +79,7 @@ public class ChessApplication extends GameApplication {
 
     @Override
     protected void initInput() {
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseClick);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseClick);
     }
 
     private void handleMouseClick(MouseEvent mouseEvent) {
