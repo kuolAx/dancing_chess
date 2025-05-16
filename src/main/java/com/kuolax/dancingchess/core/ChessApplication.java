@@ -78,9 +78,11 @@ public class ChessApplication extends GameApplication {
 
         Board board = gameController.getBoard();
 
-        if (board.isChecked(currentPlayer)) {
+        if (board.isChecked(currentPlayer) && board.getLastMove() != null && !board.getLastMove().isCheckmate()) {
             gameWorld.addEntity(entityFactory.spawnCheckHighlight(board.getKingSquare(currentPlayer)));
             FXGL.getAssetLoader().loadSound("move-check.mp3").getAudio().play();
+        } else if (board.getLastMove() != null && board.getLastMove().isCheckmate()) {
+            FXGL.getAssetLoader().loadSound("checkmate.wav").getAudio().play();
         } else {
             gameWorld.getEntitiesByType(EntityType.CHECK_HIGHLIGHT).forEach(Entity::removeFromWorld);
         }
