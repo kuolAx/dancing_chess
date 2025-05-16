@@ -108,7 +108,7 @@ public enum MoveType {
     }
 
     private static boolean isPawnDoubleForward(Square from, Square to, int direction) {
-        boolean isFirstOrSecondRank = (direction == 1 && from.getY() <= 2) || (direction == -1 && from.getY() >= 6);
+        boolean isFirstOrSecondRank = (direction == 1 && from.getY() <= 2) || (direction == -1 && from.getY() >= 7);
 
         return isFirstOrSecondRank
                 && from.isVerticalTo(to)
