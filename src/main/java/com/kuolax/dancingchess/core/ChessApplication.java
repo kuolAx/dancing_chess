@@ -90,8 +90,6 @@ public class ChessApplication extends GameApplication {
     }
 
     private void processSquareClick(Square clickedSquare) {
-        System.out.println("Clicked on: " + clickedSquare);
-
         Piece clickedPiece = gameController.getBoard().getPieceAt(clickedSquare);
 
         // first click -> pick piece and highlight possible moves
@@ -100,7 +98,6 @@ public class ChessApplication extends GameApplication {
                 && clickedPiece.getColor() == gameController.getCurrentPlayer()) {
             selectedSquare = clickedSquare;
             selectedPiece = clickedPiece;
-            System.out.println("Selected " + clickedPiece.getId() + "on " + clickedSquare);
 
             getGameWorld().addEntity(entityFactory.spawnSelectedPieceHighlight(selectedPiece.getPosition()));
 
@@ -134,8 +131,7 @@ public class ChessApplication extends GameApplication {
     }
 
     private void clearHighlights() {
-        getGameWorld()
-                .getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT, EntityType.SELECTED_PIECE_HIGHLIGHT)
+        getGameWorld().getEntitiesByType(EntityType.LEGAL_MOVE_HIGHLIGHT, EntityType.SELECTED_PIECE_HIGHLIGHT)
                 .forEach(Entity::removeFromWorld);
     }
 
