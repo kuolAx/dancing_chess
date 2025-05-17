@@ -12,9 +12,6 @@ import com.kuolax.dancingchess.pieces.Piece;
 import com.kuolax.dancingchess.pieces.PieceColor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,19 +19,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
-import static com.kuolax.dancingchess.board.Square.getByMousePosition;
 import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
 import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
 import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
 import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
 
 public class ChessApplication extends GameApplication {
-    private static final int BOARD_X_OFFSET = 0;
-    private static final int BOARD_Y_OFFSET = 0;
-
     private GameWorld gameWorld;
     private final GameController gameController = new GameController();
     private final ChessEntityFactory entityFactory = new ChessEntityFactory();
@@ -66,12 +57,10 @@ public class ChessApplication extends GameApplication {
     @Override
     protected void initGame() {
         gameWorld = FXGL.getGameWorld();
-//        setupMousePositionTracker();
         gameWorld.addEntityFactory(entityFactory);
 
         Arrays.stream(Square.values())
-                .forEach(at -> gameWorld.addEntities(entityFactory.spawnSquare(at)
-                        /* ,entityFactory.spawnSquareText(at)*/));
+                .forEach(at -> gameWorld.addEntities(entityFactory.spawnSquare(at)));
         updateBoard();
         FXGL.getAssetLoader().loadSound("game_start.mp3").getAudio().play();
     }
@@ -231,7 +220,6 @@ public class ChessApplication extends GameApplication {
         selectedSquare = null;
     }
 
-
     private void setLegalMoveHighlights() {
         Map<Boolean, List<Square>> isTakingMoveMap = selectedPieceLegalMoves.stream()
                 .collect(Collectors.partitioningBy(s -> gameController.getBoard().getPieceAt(s) == null));
@@ -283,32 +271,5 @@ public class ChessApplication extends GameApplication {
                         EntityType.TAKEABLE_PIECE_HIGHLIGHT,
                         EntityType.DRAG_TARGET_HIGHLIGHT)
                 .forEach(Entity::removeFromWorld);
-    }
-
-    private void setupMousePositionTracker() {
-        Text mousePositionText = new Text();
-        mousePositionText.setTranslateX(8 * SQUARE_SIZE + 20);
-        mousePositionText.setTranslateY(30);
-
-        Rectangle background = new Rectangle(150, 70, Color.color(0, 0, 0, 0.3));
-        background.setTranslateX(8 * SQUARE_SIZE + 10);
-        background.setTranslateY(5);
-
-        getGameScene().addUINode(background);
-        getGameScene().addUINode(mousePositionText);
-
-        getInput().addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
-            double mouseX = event.getX();
-            double mouseY = event.getY();
-
-            Square square = getByMousePosition(event);
-
-            mousePositionText.setText(String.format(
-                    "Mouse: (%.1f, %.1f)%nSquare: %s%nOffset: (X=%d, Y=%d)",
-                    mouseX, mouseY,
-                    (square != null) ? square.toString() : "None",
-                    BOARD_X_OFFSET, BOARD_Y_OFFSET
-            ));
-        });
     }
 }

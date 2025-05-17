@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
 import static com.kuolax.dancingchess.core.EntityType.CHECK_HIGHLIGHT;
@@ -152,18 +151,6 @@ public class ChessEntityFactory implements EntityFactory {
                 .view(highlightGroup)
                 .zIndex(1)
                 .opacity(0.8)
-                .build();
-    }
-
-    @Spawns("squareText")
-    public Entity spawnSquareText(Square square) {
-        return FXGL.entityBuilder()
-                .type(EntityType.TEXT)
-                .view(new Text(square.toString()))
-                .zIndex(0)
-                .at(square.getSpawnX() + 5, square.getSpawnY() + SQUARE_SIZE - 5)
-                .opacity(0.3)
-                .anchorFromCenter()
                 .build();
     }
 
