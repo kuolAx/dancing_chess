@@ -57,7 +57,7 @@ public class ChessEntityFactory implements EntityFactory {
         return FXGL.entityBuilder()
                 .type(PIECE)
                 .view(fileName)
-                .scale(0.285, 0.285)
+                .scale(0.285 * SQUARE_SIZE / 70, 0.285 * SQUARE_SIZE / 70)
                 .at(at.getSpawnX(), at.getSpawnY())
                 .zIndex(2)
                 .anchorFromCenter()
