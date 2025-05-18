@@ -200,10 +200,10 @@ public class Board {
         PieceColor playerColor = movingPiece.getColor();
         PieceColor opponent = playerColor.getOpponent();
 
-        boolean isTakingMove = takenPiece != null;
         boolean isCheck = isChecked(opponent);
         boolean isCastling = isKingCastlingMove(from, to, movingPiece);
         boolean isEnPassantCapture = isEnPassantCapture(from, to, movingPiece);
+        boolean isTakingMove = (takenPiece != null) || isEnPassantCapture;
         boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
         Square enPassantSquare = (movingPiece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? movingPiece.getPosition() : null;
 
