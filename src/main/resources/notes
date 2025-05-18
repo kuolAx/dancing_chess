@@ -17,3 +17,13 @@ add computer player for single player
 -> Zobrist Hashing
 -> neuer Gamestate DRAW_BY_REPETITION
 -> bei move-undo beachten hier updates zu machen in meiner move-historie
+
+
+
+
+
+
+Chess with handicap modes
+    - random square and you have to reach it if possible
+    - have to move same piece type as opponent
+    - ...
