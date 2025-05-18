@@ -4,7 +4,7 @@ move - animation
 pfeile zum calculaten mit rechtsklick zeichnen lassen
 
 flip table mit umlegbarem schalter und Animation
-Spielhistorie  mit Zügen
+Spielhistorie  mit Zügen für Spieler anzeigen
 Undo Funktion für Moves
 
 getAllLegalMoves als Liste speichern und beim move nur noch prüfen, ob der Player Move enthalten ist!

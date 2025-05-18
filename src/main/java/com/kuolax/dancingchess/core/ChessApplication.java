@@ -243,7 +243,9 @@ public class ChessApplication extends GameApplication {
             case WHITE_WINS -> "White wins by checkmate!";
             case BLACK_WINS -> "Black wins by checkmate!";
             case STALEMATE -> "Stalemate! Game ended in a draw.";
-            case DRAW -> "Draw! Game ended in a draw.";
+            case DRAW -> "Draw! Game ended in a draw due to exceeding the move limit.";
+            case DRAW_BY_REPETITION -> "Draw! Game ended in a draw due to threefold repetition.";
+            case DRAW_BY_INSUFFICIENT_MATERIAL -> "Draw! Game ended in a draw due to insufficient material.";
             default -> "Game ended";
         };
 

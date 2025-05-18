@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import static com.kuolax.dancingchess.core.GameState.BLACK_WINS;
 import static com.kuolax.dancingchess.core.GameState.DRAW;
+import static com.kuolax.dancingchess.core.GameState.DRAW_BY_REPETITION;
 import static com.kuolax.dancingchess.core.GameState.ONGOING;
 import static com.kuolax.dancingchess.core.GameState.STALEMATE;
 import static com.kuolax.dancingchess.core.GameState.WHITE_WINS;
@@ -75,8 +76,10 @@ public class GameController {
     }
 
     private void updateGameState(Move lastMove) {
-        if (roundNumber >= 50 || isThreeMoveRepetition(moveHistory))
+        if (roundNumber >= 50)
             gameState = DRAW;
+        else if (isThreefoldRepetition(moveHistory))
+            gameState = DRAW_BY_REPETITION;
         else if (lastMove.isCheckmate())
             gameState = (currentPlayer == WHITE) ? BLACK_WINS : WHITE_WINS;
         else if (lastMove.isStaleMate())
@@ -85,7 +88,7 @@ public class GameController {
             gameState = ONGOING;
     }
 
-    private boolean isThreeMoveRepetition(List<Move> moves) {
+    private boolean isThreefoldRepetition(List<Move> moves) {
         return moves.stream()
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
