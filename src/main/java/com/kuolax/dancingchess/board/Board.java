@@ -81,7 +81,7 @@ public class Board {
             if (isEnPassantCapture(from, to, movingPiece)) pieces.put(getEnPassantTarget(), null);
 
             updateCheckStatus();
-            updateLastMove(movingPiece, from, to, takenPiece);
+            updateLastMove(movingPiece, from, to, takenPiece, null);
 
             return true;
         }
@@ -153,6 +153,13 @@ public class Board {
         if (dancePartner != null) dancePartner.setDancePartner(promotedPiece);
 
         pieces.put(position, promotedPiece);
+
+        // update check status, since the promoted pawn might attack the enemy king square now
+        updateCheckStatus();
+
+        // overwrite lastMove with promotion specific context
+        Square from = Square.getByCoordinates(pawn.getPosition().getX(), pawn.getPosition().getY() - PawnMoveValidator.getPawnMoveDirection(pawn.getColor()));
+        updateLastMove(pawn, from, pawn.getPosition(), null, desiredPromotionType);
     }
 
     public Square getKingSquare(PieceColor playerColor) {
@@ -189,7 +196,7 @@ public class Board {
         blackChecked = isCheck(BLACK);
     }
 
-    private void updateLastMove(Piece movingPiece, Square from, Square to, Piece takenPiece) {
+    private void updateLastMove(Piece movingPiece, Square from, Square to, Piece takenPiece, PieceType promotionType) {
         PieceColor playerColor = movingPiece.getColor();
         PieceColor opponent = playerColor.getOpponent();
 
@@ -201,7 +208,7 @@ public class Board {
         Square enPassantSquare = (movingPiece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? movingPiece.getPosition() : null;
 
         lastMove = new Move(movingPiece, from, to, isTakingMove, isCheck, isCastling, isCheck && hasNoLegalMoves,
-                !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(movingPiece, to), null);
+                !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(movingPiece, to), promotionType);
     }
 
     private boolean isEnPassantCapture(Square from, Square to, Piece movingPiece) {

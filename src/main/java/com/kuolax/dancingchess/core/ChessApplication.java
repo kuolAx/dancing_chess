@@ -240,8 +240,8 @@ public class ChessApplication extends GameApplication {
         GameState state = gameController.getGameState();
 
         String message = switch (state) {
-            case WHITE_WINS -> "White wins by PACO!";
-            case BLACK_WINS -> "Black wins by PACO!";
+            case WHITE_WINS -> "White wins by checkmate!";
+            case BLACK_WINS -> "Black wins by checkmate!";
             case STALEMATE -> "Stalemate! Game ended in a draw.";
             case DRAW -> "Draw! Game ended in a draw.";
             default -> "Game ended";
@@ -261,6 +261,7 @@ public class ChessApplication extends GameApplication {
                     Piece pawn = gameController.getBoard().getPieceAt(position);
                     gameController.getBoard().promotePawn(pawn, pieceType, position);
                     updateBoard();
+                    gameController.updateLastMove();
                 },
                 QUEEN, KNIGHT, BISHOP, ROOK);
     }

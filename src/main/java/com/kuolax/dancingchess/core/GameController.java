@@ -92,4 +92,9 @@ public class GameController {
                 .stream()
                 .anyMatch(moveEntry -> moveEntry.getValue() >= 3);
     }
+
+    public void updateLastMove() {
+        moveHistory.removeLast();
+        moveHistory.add(board.getLastMove());
+    }
 }
