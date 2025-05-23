@@ -1,9 +1,10 @@
 todo
 
+normales Chess Projekt daraus machen und später für dancing chess forken
+
 move - animation
 pfeile zum calculaten mit rechtsklick zeichnen lassen
 
-flip table mit umlegbarem schalter und Animation
 Spielhistorie  mit Zügen für Spieler anzeigen
 Undo Funktion für Moves
 
@@ -18,6 +19,11 @@ add computer player for single player
 -> neuer Gamestate DRAW_BY_REPETITION
 -> bei move-undo beachten hier updates zu machen in meiner move-historie
 
+flip table mit umlegbarem schalter und Animation
+
+
+
+
 
 
 
@@ -26,4 +32,6 @@ add computer player for single player
 Chess with handicap modes
     - random square and you have to reach it if possible
     - have to move same piece type as opponent
+    - circular chess
+    - spell chess (hearthstone, pawns freeze other pieces etc.)
     - ...
