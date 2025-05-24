@@ -202,13 +202,13 @@ public class Board {
         PieceColor opponent = playerColor.getOpponent();
 
         boolean isCheck = isChecked(opponent);
-        boolean isCastling = isKingCastlingMove(from, to, movingPiece);
+        boolean isCastlingMove = isKingCastlingMove(from, to, movingPiece);
         boolean isEnPassantCapture = isEnPassantCapture(from, to, movingPiece);
         boolean isTakingMove = (takenPiece != null) || isEnPassantCapture;
         boolean hasNoLegalMoves = hasNoLegalMoves(opponent);
         Square enPassantSquare = (movingPiece.getType() == PAWN) && (from.getYDiff(to)) == 2 ? movingPiece.getPosition() : null;
 
-        lastMove = new Move(movingPiece, from, to, isTakingMove, isCheck, isCastling, isCheck && hasNoLegalMoves,
+        lastMove = new Move(movingPiece.getColor(), movingPiece, from, to, isTakingMove, takenPiece, isCheck, isCastlingMove, isCheck && hasNoLegalMoves,
                 !isCheck && hasNoLegalMoves, isEnPassantCapture, enPassantSquare, canPromote(movingPiece, to), promotionType);
     }
 

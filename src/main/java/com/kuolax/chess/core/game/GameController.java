@@ -6,15 +6,16 @@ import com.kuolax.chess.core.model.Square;
 import com.kuolax.chess.core.model.move.Move;
 import com.kuolax.chess.core.model.piece.Piece;
 import com.kuolax.chess.core.model.piece.PieceColor;
+import com.kuolax.chess.core.model.piece.PieceType;
+import com.kuolax.chess.util.ZobristHash;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static com.kuolax.chess.core.model.GameState.BLACK_WINS;
-import static com.kuolax.chess.core.model.GameState.DRAW;
 import static com.kuolax.chess.core.model.GameState.DRAW_BY_REPETITION;
 import static com.kuolax.chess.core.model.GameState.ONGOING;
 import static com.kuolax.chess.core.model.GameState.STALEMATE;
@@ -32,6 +33,16 @@ public class GameController {
     private int roundNumber;
     private GameState gameState;
 
+    // variables necessary for zobrist hashing of positions for threefold repetition detection
+    private final Map<Long, Integer> positionHistory;
+    private boolean whiteCanCastleKingSide = true;
+    private boolean whiteCanCastleQueenSide = true;
+    private boolean blackCanCastleKingSide = true;
+    private boolean blackCanCastleQueenSide = true;
+    private Integer enPassantFile = null;
+    @Getter
+    private long currentPositionHash;
+
     public GameController() {
         board = new Board();
         currentPlayer = WHITE;
@@ -39,6 +50,7 @@ public class GameController {
         roundNumber = 1;
         gameState = ONGOING;
         moveHistory = new ArrayList<>();
+        positionHistory = new HashMap<>();
     }
 
     public boolean isGameOver() {
@@ -50,15 +62,44 @@ public class GameController {
         if (piece == null || piece.getColor() != currentPlayer) return false;
 
         boolean moveSuccessful = board.movePiece(from, to, piece);
-
         if (moveSuccessful) {
             switchPlayer();
             Move lastMove = board.getLastMove();
             moveHistory.add(lastMove);
+            updateZobristHash(lastMove);
             updateGameState(lastMove);
             return true;
         }
         return false;
+    }
+
+    private void updateZobristHash(Move lastMove) {
+        boolean oldWhiteKingSide = whiteCanCastleKingSide;
+        boolean oldWhiteQueenSide = whiteCanCastleQueenSide;
+        boolean oldBlackKingSide = blackCanCastleKingSide;
+        boolean oldBlackQueenSide = blackCanCastleQueenSide;
+        Integer oldEnPassantFile = enPassantFile;
+        updateCastlingRights(lastMove);
+        updateEnPassant(lastMove);
+
+        currentPositionHash = ZobristHash.updateHashForMove(
+                currentPositionHash,
+                lastMove.from().getY(), lastMove.from().getX(),
+                lastMove.to().getY(), lastMove.to().getX(),
+                lastMove.movedPiece(), lastMove.capturedPiece()
+        );
+        currentPositionHash = ZobristHash.updateHashForCastlingChange(
+                currentPositionHash,
+                oldWhiteKingSide, oldWhiteQueenSide, oldBlackKingSide, oldBlackQueenSide,
+                whiteCanCastleKingSide, whiteCanCastleQueenSide,
+                blackCanCastleKingSide, blackCanCastleQueenSide
+        );
+        currentPositionHash = ZobristHash.updateHashForEnPassantChange(
+                currentPositionHash, oldEnPassantFile, enPassantFile
+        );
+        currentPositionHash = ZobristHash.updateHashForPlayerChange(currentPositionHash);
+
+        recordCurrentPosition();
     }
 
     public void resetGame() {
@@ -77,9 +118,7 @@ public class GameController {
     }
 
     private void updateGameState(Move lastMove) {
-        if (roundNumber >= 50)
-            gameState = DRAW;
-        else if (isThreefoldRepetition(moveHistory))
+        if (isThreefoldRepetition(positionHistory))
             gameState = DRAW_BY_REPETITION;
         else if (lastMove.isCheckmate())
             gameState = (currentPlayer == WHITE) ? BLACK_WINS : WHITE_WINS;
@@ -89,16 +128,79 @@ public class GameController {
             gameState = ONGOING;
     }
 
-    private boolean isThreefoldRepetition(List<Move> moves) {
-        return moves.stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .anyMatch(moveEntry -> moveEntry.getValue() >= 3);
-    }
-
     public void updateLastMove() {
         moveHistory.removeLast();
         moveHistory.add(board.getLastMove());
+    }
+
+    private boolean isThreefoldRepetition(Map<Long, Integer> positionHistory) {
+        return positionHistory.getOrDefault(currentPositionHash, 0) >= 3;
+    }
+
+    private void updateEnPassant(Move move) {
+        enPassantFile = null;
+        if (move.enPassantTarget() != null) enPassantFile = move.enPassantTarget().getX();
+    }
+
+    private void recordCurrentPosition() {
+        positionHistory.merge(currentPositionHash, 1, Integer::sum);
+    }
+
+    // update castling rights based on last move
+    private void updateCastlingRights(Move move) {
+        Piece piece = move.movedPiece();
+        PieceColor playerColor = move.playerColor();
+        int fromRow = move.from().getY();
+        int fromCol = move.from().getX();
+        int toRow = move.to().getY();
+        int toCol = move.to().getX();
+        
+        // king moves - lose all castling rights for that player
+        updateCastlingAfterKingMoved(piece, playerColor);
+        // rook moves - lose castling rights for that side
+        updateCastlingAfterRookMoved(piece, playerColor, fromRow, fromCol);
+        // capture of rook - lose castling rights
+        updateCastlingAfterRookGotCaptured(toRow, toCol);
+    }
+
+    private void updateCastlingAfterKingMoved(Piece piece, PieceColor playerColor) {
+        if (piece.getType() != PieceType.KING) return;
+
+        if (playerColor == PieceColor.WHITE) {
+            whiteCanCastleKingSide = false;
+            whiteCanCastleQueenSide = false;
+        } else {
+            blackCanCastleKingSide = false;
+            blackCanCastleQueenSide = false;
+        }
+    }
+
+    private void updateCastlingAfterRookMoved(Piece piece, PieceColor playerColor, int fromRow, int fromCol) {
+        if (piece.getType() != PieceType.ROOK) return;
+
+        if (playerColor == PieceColor.WHITE) {
+            if (fromRow == 8 && fromCol == 1) whiteCanCastleQueenSide = false;
+            else if (fromRow == 8 && fromCol == 8) whiteCanCastleKingSide = false;
+        } else {
+            if (fromRow == 1 && fromCol == 1) blackCanCastleQueenSide = false;
+            else if (fromRow == 1 && fromCol == 8) blackCanCastleKingSide = false;
+        }
+    }
+
+    private void updateCastlingAfterRookGotCaptured(int toRow, int toCol) {
+        if (toRow == 1 && toCol == 1) blackCanCastleQueenSide = false;
+        else if (toRow == 1 && toCol == 8) blackCanCastleKingSide = false;
+        else if (toRow == 8 && toCol == 1) whiteCanCastleQueenSide = false;
+        else if (toRow == 8 && toCol == 8) whiteCanCastleKingSide = false;
+    }
+
+    // recalculate complete position hash (fallback method)
+    private void updateCurrentPositionHash() {
+        currentPositionHash = com.kuolax.chess.util.ZobristHash.calculateZobristHash(
+                board, currentPlayer,
+                whiteCanCastleKingSide, whiteCanCastleQueenSide,
+                blackCanCastleKingSide, blackCanCastleQueenSide,
+                enPassantFile
+        );
     }
 }

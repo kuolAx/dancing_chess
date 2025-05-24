@@ -101,7 +101,7 @@ public class ChessApplication extends GameApplication {
         if (lastMove.isCheckmate() || lastMove.isStaleMate())
             FXGL.getAssetLoader().loadSound("game_end.wav").getAudio().play();
         else if (lastMove.isCheck()) FXGL.getAssetLoader().loadSound("move-check.mp3").getAudio().play();
-        else if (lastMove.isCastling()) FXGL.getAssetLoader().loadSound("castle.mp3").getAudio().play();
+        else if (lastMove.isCastlingMove()) FXGL.getAssetLoader().loadSound("castle.mp3").getAudio().play();
         else if (lastMove.isPromotion()) FXGL.getAssetLoader().loadSound("promote.mp3").getAudio().play();
         else if (lastMove.isTakingMove()) FXGL.getAssetLoader().loadSound("capture.mp3").getAudio().play();
         else FXGL.getAssetLoader().loadSound("move-self.mp3").getAudio().play();
