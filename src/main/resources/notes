@@ -2,25 +2,14 @@ todo
 
 normales Chess Projekt daraus machen und später für dancing chess forken
 
-move - animation
-pfeile zum calculaten mit rechtsklick zeichnen lassen
-
-Spielhistorie  mit Zügen für Spieler anzeigen
-Undo Funktion für Moves
-
 getAllLegalMoves als Liste speichern und beim move nur noch prüfen, ob der Player Move enthalten ist!
 -> nicht erneut validieren! somit die single Methode islegalmove niemals direkt aufrufen!
 
 support fen notation (export and import from/to fen String)
+
 add computer player for single player
 
-3 move repetition sollte den gesamten board state berücksichtigen
--> Zobrist Hashing
--> bei move-undo beachten hier updates zu machen in meiner move-historie
-
 flip table mit Schalter + Animation
-
-
 
 
 
