@@ -12,13 +12,13 @@ import java.util.Random;
  * Used for threefold repetition detection and transposition tables.
  */
 public class ZobristHash {
-    // hash tables
+    // hash arrays
     private static final long[][][] PIECE_KEYS = new long[8][8][12];    // [row][col][piece_type]
     private static final long[] CASTLING_KEYS = new long[16];           // 4 bits for castling rights
     private static final long[] EN_PASSANT_KEYS = new long[8];          // for each file
     private static final long BLACK_TO_MOVE_KEY;
 
-    // movedPiece type mapping for array indexing
+    // piece mapping for array indexing
     private static final int WHITE_PAWN = 0;
     private static final int WHITE_ROOK = 1;
     private static final int WHITE_KNIGHT = 2;
@@ -30,16 +30,16 @@ public class ZobristHash {
         // initialize with fixed seed for consistent hashes across program runs
         Random random = new Random(8012787123L);
 
-        // initialize movedPiece random keys
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        // initialize piece random keys
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
                 for (int piece = 0; piece < 12; piece++) {
-                    PIECE_KEYS[row][col][piece] = random.nextLong();
+                    PIECE_KEYS[col][row][piece] = random.nextLong();
                 }
             }
         }
 
-        // initialize castling keys (16 combinations of KQkq)
+        // initialize castling keys (for 16 possible combinations of KQkq)
         for (int i = 0; i < 16; i++) {
             CASTLING_KEYS[i] = random.nextLong();
         }
@@ -80,12 +80,12 @@ public class ZobristHash {
     public static long calculateBoardHash(Board board) {
         long hash = 0L;
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Piece piece = board.getPieceAt(Square.getByCoordinates(row, col));
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = board.getPieceAt(Square.getByCoordinates(col, row));
                 if (piece != null) {
                     int pieceIndex = getPieceIndex(piece);
-                    hash ^= PIECE_KEYS[row][col][pieceIndex];
+                    hash ^= PIECE_KEYS[col][row][pieceIndex];
                 }
             }
         }
@@ -93,8 +93,7 @@ public class ZobristHash {
         return hash;
     }
 
-    /**
-     * Incrementally update hash when a movedPiece is moved.
+    /* Incrementally update hash when a piece is moved.
      * Usable for moves and undo moves.
      */
     public static long updateHashForMove(long currentHash, int fromRow, int fromCol,
@@ -102,17 +101,17 @@ public class ZobristHash {
                                          Piece capturedPiece) {
         long newHash = currentHash;
 
-        // Remove movedPiece from old position
+        // remove piece from old position
         int pieceIndex = getPieceIndex(movingPiece);
-        newHash ^= PIECE_KEYS[fromRow][fromCol][pieceIndex];
+        newHash ^= PIECE_KEYS[fromCol - 1][fromRow - 1][pieceIndex];
 
-        // Add movedPiece to new position
-        newHash ^= PIECE_KEYS[toRow][toCol][pieceIndex];
+        // add piece to new position
+        newHash ^= PIECE_KEYS[toCol - 1][toRow - 1][pieceIndex];
 
-        // Remove captured movedPiece if any
+        // remove captured piece if any
         if (capturedPiece != null) {
             int capturedIndex = getPieceIndex(capturedPiece);
-            newHash ^= PIECE_KEYS[toRow][toCol][capturedIndex];
+            newHash ^= PIECE_KEYS[toCol - 1][toRow - 1][capturedIndex];
         }
 
         return newHash;
@@ -140,9 +139,6 @@ public class ZobristHash {
         return newHash;
     }
 
-    /**
-     * Update hash for castling rights change
-     */
     public static long updateHashForCastlingChange(long currentHash,
                                                    boolean oldWhiteKingSide, boolean oldWhiteQueenSide,
                                                    boolean oldBlackKingSide, boolean oldBlackQueenSide,
