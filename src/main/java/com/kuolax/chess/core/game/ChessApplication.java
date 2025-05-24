@@ -1,15 +1,16 @@
-package com.kuolax.dancingchess.core;
+package com.kuolax.chess.core.game;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Move;
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.GameState;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.Move;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -19,11 +20,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
-import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
-import static com.kuolax.dancingchess.pieces.PieceType.BISHOP;
-import static com.kuolax.dancingchess.pieces.PieceType.KNIGHT;
-import static com.kuolax.dancingchess.pieces.PieceType.QUEEN;
-import static com.kuolax.dancingchess.pieces.PieceType.ROOK;
+import static com.kuolax.chess.core.model.Square.SQUARE_SIZE;
+import static com.kuolax.chess.core.model.piece.PieceType.BISHOP;
+import static com.kuolax.chess.core.model.piece.PieceType.KNIGHT;
+import static com.kuolax.chess.core.model.piece.PieceType.QUEEN;
+import static com.kuolax.chess.core.model.piece.PieceType.ROOK;
 
 public class ChessApplication extends GameApplication {
     private GameWorld gameWorld;
@@ -127,7 +128,7 @@ public class ChessApplication extends GameApplication {
     private void processSquareClick(Square clickedSquare) {
         Piece clickedPiece = gameController.getBoard().getPieceAt(clickedSquare);
 
-        // first click -> pick piece and highlight possible moves
+        // first click -> pick piece and highlight possible move
         if (selectedSquare == null
                 && clickedPiece != null
                 && clickedPiece.getColor() == gameController.getCurrentPlayer()) {

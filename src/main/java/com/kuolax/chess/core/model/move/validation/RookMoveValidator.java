@@ -1,13 +1,14 @@
-package com.kuolax.dancingchess.moves;
+package com.kuolax.chess.core.model.move.validation;
 
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Square;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.MoveType;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static com.kuolax.dancingchess.moves.MoveType.HORIZONTAL;
-import static com.kuolax.dancingchess.moves.MoveType.VERTICAL;
+import static com.kuolax.chess.core.model.move.MoveType.HORIZONTAL;
+import static com.kuolax.chess.core.model.move.MoveType.VERTICAL;
 
 public class RookMoveValidator extends AbstractMoveValidator {
 

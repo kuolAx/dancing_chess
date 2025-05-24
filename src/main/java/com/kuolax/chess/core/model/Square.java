@@ -1,12 +1,12 @@
-package com.kuolax.dancingchess.board;
+package com.kuolax.chess.core.model;
 
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.piece.PieceColor;
 import javafx.scene.input.MouseEvent;
 import lombok.Getter;
 
 import java.util.Arrays;
 
-import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
+import static com.kuolax.chess.core.model.piece.PieceColor.WHITE;
 import static javafx.scene.paint.Color.BEIGE;
 import static javafx.scene.paint.Color.SADDLEBROWN;
 

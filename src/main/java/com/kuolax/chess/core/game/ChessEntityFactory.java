@@ -1,26 +1,26 @@
-package com.kuolax.dancingchess.core;
+package com.kuolax.chess.core.game;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.Spawns;
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.piece.Piece;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-import static com.kuolax.dancingchess.board.Square.SQUARE_SIZE;
-import static com.kuolax.dancingchess.core.EntityType.CHECK_HIGHLIGHT;
-import static com.kuolax.dancingchess.core.EntityType.DRAG_TARGET_HIGHLIGHT;
-import static com.kuolax.dancingchess.core.EntityType.LAST_MOVE_HIGHLIGHT;
-import static com.kuolax.dancingchess.core.EntityType.LEGAL_MOVE_HIGHLIGHT;
-import static com.kuolax.dancingchess.core.EntityType.PIECE;
-import static com.kuolax.dancingchess.core.EntityType.SELECTED_PIECE_HIGHLIGHT;
-import static com.kuolax.dancingchess.core.EntityType.SQUARE;
-import static com.kuolax.dancingchess.core.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.CHECK_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.DRAG_TARGET_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.LAST_MOVE_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.LEGAL_MOVE_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.PIECE;
+import static com.kuolax.chess.core.game.EntityType.SELECTED_PIECE_HIGHLIGHT;
+import static com.kuolax.chess.core.game.EntityType.SQUARE;
+import static com.kuolax.chess.core.game.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
+import static com.kuolax.chess.core.model.Square.SQUARE_SIZE;
 import static javafx.scene.paint.Color.DARKRED;
 import static javafx.scene.paint.Color.YELLOWGREEN;
 

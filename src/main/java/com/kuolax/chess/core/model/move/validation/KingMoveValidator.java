@@ -1,32 +1,33 @@
-package com.kuolax.dancingchess.moves;
+package com.kuolax.chess.core.model.move.validation;
 
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.MoveType;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.kuolax.dancingchess.board.Square.A1;
-import static com.kuolax.dancingchess.board.Square.A8;
-import static com.kuolax.dancingchess.board.Square.B1;
-import static com.kuolax.dancingchess.board.Square.B8;
-import static com.kuolax.dancingchess.board.Square.C1;
-import static com.kuolax.dancingchess.board.Square.C8;
-import static com.kuolax.dancingchess.board.Square.D1;
-import static com.kuolax.dancingchess.board.Square.D8;
-import static com.kuolax.dancingchess.board.Square.F1;
-import static com.kuolax.dancingchess.board.Square.F8;
-import static com.kuolax.dancingchess.board.Square.G1;
-import static com.kuolax.dancingchess.board.Square.G8;
-import static com.kuolax.dancingchess.board.Square.H1;
-import static com.kuolax.dancingchess.board.Square.H8;
-import static com.kuolax.dancingchess.moves.MoveType.KING_CASTLE_LONG;
-import static com.kuolax.dancingchess.moves.MoveType.KING_CASTLE_SHORT;
-import static com.kuolax.dancingchess.moves.MoveType.KING_MOVE;
-import static com.kuolax.dancingchess.moves.MoveType.isKingMove;
+import static com.kuolax.chess.core.model.Square.A1;
+import static com.kuolax.chess.core.model.Square.A8;
+import static com.kuolax.chess.core.model.Square.B1;
+import static com.kuolax.chess.core.model.Square.B8;
+import static com.kuolax.chess.core.model.Square.C1;
+import static com.kuolax.chess.core.model.Square.C8;
+import static com.kuolax.chess.core.model.Square.D1;
+import static com.kuolax.chess.core.model.Square.D8;
+import static com.kuolax.chess.core.model.Square.F1;
+import static com.kuolax.chess.core.model.Square.F8;
+import static com.kuolax.chess.core.model.Square.G1;
+import static com.kuolax.chess.core.model.Square.G8;
+import static com.kuolax.chess.core.model.Square.H1;
+import static com.kuolax.chess.core.model.Square.H8;
+import static com.kuolax.chess.core.model.move.MoveType.KING_CASTLE_LONG;
+import static com.kuolax.chess.core.model.move.MoveType.KING_CASTLE_SHORT;
+import static com.kuolax.chess.core.model.move.MoveType.KING_MOVE;
+import static com.kuolax.chess.core.model.move.MoveType.isKingMove;
 
 public class KingMoveValidator extends AbstractMoveValidator {
 

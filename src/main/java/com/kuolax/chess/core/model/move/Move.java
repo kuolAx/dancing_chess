@@ -1,7 +1,8 @@
-package com.kuolax.dancingchess.board;
+package com.kuolax.chess.core.model.move;
 
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceType;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceType;
 
 public record Move(Piece piece,
                    Square from,

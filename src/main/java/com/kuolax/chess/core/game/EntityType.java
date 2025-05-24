@@ -1,4 +1,4 @@
-package com.kuolax.dancingchess.core;
+package com.kuolax.chess.core.game;
 
 public enum EntityType {
     BOARD,

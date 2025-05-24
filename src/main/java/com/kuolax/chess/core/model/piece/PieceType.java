@@ -1,15 +1,15 @@
-package com.kuolax.dancingchess.pieces;
+package com.kuolax.chess.core.model.piece;
 
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.board.StandardStartPositions;
-import com.kuolax.dancingchess.board.StartPositionsProvider;
-import com.kuolax.dancingchess.moves.BishopMoveValidator;
-import com.kuolax.dancingchess.moves.KingMoveValidator;
-import com.kuolax.dancingchess.moves.KnightMoveValidator;
-import com.kuolax.dancingchess.moves.MoveValidator;
-import com.kuolax.dancingchess.moves.PawnMoveValidator;
-import com.kuolax.dancingchess.moves.QueenMoveValidator;
-import com.kuolax.dancingchess.moves.RookMoveValidator;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.StandardStartPositions;
+import com.kuolax.chess.core.model.move.StartPositionsProvider;
+import com.kuolax.chess.core.model.move.validation.BishopMoveValidator;
+import com.kuolax.chess.core.model.move.validation.KingMoveValidator;
+import com.kuolax.chess.core.model.move.validation.KnightMoveValidator;
+import com.kuolax.chess.core.model.move.validation.MoveValidator;
+import com.kuolax.chess.core.model.move.validation.PawnMoveValidator;
+import com.kuolax.chess.core.model.move.validation.QueenMoveValidator;
+import com.kuolax.chess.core.model.move.validation.RookMoveValidator;
 import lombok.Getter;
 
 import java.util.List;

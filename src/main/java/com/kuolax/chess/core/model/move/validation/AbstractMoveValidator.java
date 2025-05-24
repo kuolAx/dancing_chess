@@ -1,13 +1,14 @@
-package com.kuolax.dancingchess.moves;
+package com.kuolax.chess.core.model.move.validation;
 
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.MoveType;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
 
 import java.util.List;
 
-import static com.kuolax.dancingchess.moves.MoveType.determineStandardMoveType;
+import static com.kuolax.chess.core.model.move.MoveType.determineStandardMoveType;
 
 public abstract class AbstractMoveValidator implements MoveValidator {
 
@@ -46,7 +47,7 @@ public abstract class AbstractMoveValidator implements MoveValidator {
             case HORIZONTAL -> isHorizontalPathClear(board, from, to);
             case VERTICAL -> isVerticalPathClear(board, from, to);
             case DIAGONAL -> isDiagonalPathClear(board, from, to);
-            case KNIGHT_MOVE -> true; // knight moves do not require path check
+            case KNIGHT_MOVE -> true; // knight move do not require path check
             default -> false;
         };
     }

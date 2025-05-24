@@ -1,7 +1,7 @@
-package com.kuolax.dancingchess.pieces;
+package com.kuolax.chess.core.model.piece;
 
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Square;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.Square;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

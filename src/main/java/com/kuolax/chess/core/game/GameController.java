@@ -1,10 +1,11 @@
-package com.kuolax.dancingchess.core;
+package com.kuolax.chess.core.game;
 
-import com.kuolax.dancingchess.board.Board;
-import com.kuolax.dancingchess.board.Move;
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.Board;
+import com.kuolax.chess.core.model.GameState;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.Move;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -12,14 +13,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.kuolax.dancingchess.core.GameState.BLACK_WINS;
-import static com.kuolax.dancingchess.core.GameState.DRAW;
-import static com.kuolax.dancingchess.core.GameState.DRAW_BY_REPETITION;
-import static com.kuolax.dancingchess.core.GameState.ONGOING;
-import static com.kuolax.dancingchess.core.GameState.STALEMATE;
-import static com.kuolax.dancingchess.core.GameState.WHITE_WINS;
-import static com.kuolax.dancingchess.pieces.PieceColor.BLACK;
-import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
+import static com.kuolax.chess.core.model.GameState.BLACK_WINS;
+import static com.kuolax.chess.core.model.GameState.DRAW;
+import static com.kuolax.chess.core.model.GameState.DRAW_BY_REPETITION;
+import static com.kuolax.chess.core.model.GameState.ONGOING;
+import static com.kuolax.chess.core.model.GameState.STALEMATE;
+import static com.kuolax.chess.core.model.GameState.WHITE_WINS;
+import static com.kuolax.chess.core.model.piece.PieceColor.BLACK;
+import static com.kuolax.chess.core.model.piece.PieceColor.WHITE;
 
 @Getter
 public class GameController {

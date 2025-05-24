@@ -1,10 +1,11 @@
-package com.kuolax.dancingchess.board;
+package com.kuolax.chess.core.model;
 
-import com.kuolax.dancingchess.moves.MoveType;
-import com.kuolax.dancingchess.moves.PawnMoveValidator;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
-import com.kuolax.dancingchess.pieces.PieceType;
+import com.kuolax.chess.core.model.move.Move;
+import com.kuolax.chess.core.model.move.MoveType;
+import com.kuolax.chess.core.model.move.validation.PawnMoveValidator;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
+import com.kuolax.chess.core.model.piece.PieceType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -13,24 +14,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.kuolax.dancingchess.board.Square.A1;
-import static com.kuolax.dancingchess.board.Square.A8;
-import static com.kuolax.dancingchess.board.Square.C1;
-import static com.kuolax.dancingchess.board.Square.C8;
-import static com.kuolax.dancingchess.board.Square.D1;
-import static com.kuolax.dancingchess.board.Square.D8;
-import static com.kuolax.dancingchess.board.Square.E1;
-import static com.kuolax.dancingchess.board.Square.E8;
-import static com.kuolax.dancingchess.board.Square.F1;
-import static com.kuolax.dancingchess.board.Square.F8;
-import static com.kuolax.dancingchess.board.Square.G1;
-import static com.kuolax.dancingchess.board.Square.G8;
-import static com.kuolax.dancingchess.board.Square.H1;
-import static com.kuolax.dancingchess.board.Square.H8;
-import static com.kuolax.dancingchess.pieces.PieceColor.BLACK;
-import static com.kuolax.dancingchess.pieces.PieceColor.WHITE;
-import static com.kuolax.dancingchess.pieces.PieceType.KING;
-import static com.kuolax.dancingchess.pieces.PieceType.PAWN;
+import static com.kuolax.chess.core.model.Square.A1;
+import static com.kuolax.chess.core.model.Square.A8;
+import static com.kuolax.chess.core.model.Square.C1;
+import static com.kuolax.chess.core.model.Square.C8;
+import static com.kuolax.chess.core.model.Square.D1;
+import static com.kuolax.chess.core.model.Square.D8;
+import static com.kuolax.chess.core.model.Square.E1;
+import static com.kuolax.chess.core.model.Square.E8;
+import static com.kuolax.chess.core.model.Square.F1;
+import static com.kuolax.chess.core.model.Square.F8;
+import static com.kuolax.chess.core.model.Square.G1;
+import static com.kuolax.chess.core.model.Square.G8;
+import static com.kuolax.chess.core.model.Square.H1;
+import static com.kuolax.chess.core.model.Square.H8;
+import static com.kuolax.chess.core.model.piece.PieceColor.BLACK;
+import static com.kuolax.chess.core.model.piece.PieceColor.WHITE;
+import static com.kuolax.chess.core.model.piece.PieceType.KING;
+import static com.kuolax.chess.core.model.piece.PieceType.PAWN;
 
 public class Board {
 

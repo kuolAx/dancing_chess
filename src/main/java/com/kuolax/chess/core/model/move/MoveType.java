@@ -1,15 +1,16 @@
-package com.kuolax.dancingchess.moves;
+package com.kuolax.chess.core.model.move;
 
-import com.kuolax.dancingchess.board.Square;
-import com.kuolax.dancingchess.pieces.Piece;
-import com.kuolax.dancingchess.pieces.PieceColor;
+import com.kuolax.chess.core.model.Square;
+import com.kuolax.chess.core.model.move.validation.PawnMoveValidator;
+import com.kuolax.chess.core.model.piece.Piece;
+import com.kuolax.chess.core.model.piece.PieceColor;
 
-import static com.kuolax.dancingchess.board.Square.C1;
-import static com.kuolax.dancingchess.board.Square.C8;
-import static com.kuolax.dancingchess.board.Square.E1;
-import static com.kuolax.dancingchess.board.Square.E8;
-import static com.kuolax.dancingchess.board.Square.G1;
-import static com.kuolax.dancingchess.board.Square.G8;
+import static com.kuolax.chess.core.model.Square.C1;
+import static com.kuolax.chess.core.model.Square.C8;
+import static com.kuolax.chess.core.model.Square.E1;
+import static com.kuolax.chess.core.model.Square.E8;
+import static com.kuolax.chess.core.model.Square.G1;
+import static com.kuolax.chess.core.model.Square.G8;
 
 public enum MoveType {
     HORIZONTAL,
