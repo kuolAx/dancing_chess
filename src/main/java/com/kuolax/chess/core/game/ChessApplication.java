@@ -11,6 +11,8 @@ import com.kuolax.chess.core.model.Square;
 import com.kuolax.chess.core.model.move.Move;
 import com.kuolax.chess.core.model.piece.Piece;
 import com.kuolax.chess.core.model.piece.PieceColor;
+import com.kuolax.chess.util.ButtonStyle;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -35,9 +37,12 @@ public class ChessApplication extends GameApplication {
     private Square selectedSquare;
     private List<Square> selectedPieceLegalMoves;
 
-    //dragging functionality
+    // dragging functionality
     private boolean isDragging;
     private Entity draggedPieceShadow;
+
+    // UI elements
+    private Button undoButton;
 
     public static void main(String[] args) {
         launch(args);
@@ -45,7 +50,7 @@ public class ChessApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth((int) (8 * SQUARE_SIZE));
+        settings.setWidth((int) (10 * SQUARE_SIZE));
         settings.setHeight((int) (8 * SQUARE_SIZE));
         settings.setTitle("Dancing Chess");
         settings.setVersion("0.1");
@@ -63,7 +68,47 @@ public class ChessApplication extends GameApplication {
         Arrays.stream(Square.values())
                 .forEach(at -> gameWorld.addEntities(entityFactory.spawnSquare(at)));
         updateBoard();
+
         FXGL.getAssetLoader().loadSound("game_start.mp3").getAudio().play();
+    }
+
+    @Override
+    protected void initUI() {
+        // initialize undo button
+        undoButton = new Button("↶ Undo");
+        ButtonStyle.INITIAL.applyFor(undoButton);
+        undoButton.setOnMouseEntered(e -> ButtonStyle.HOVER.applyFor(undoButton));
+        undoButton.setOnMouseExited(e -> ButtonStyle.INITIAL.applyFor(undoButton));
+        undoButton.setTranslateX(8 * SQUARE_SIZE + SQUARE_SIZE / 2);
+        undoButton.setTranslateY(50);
+        undoButton.setOnAction(e -> handleUndoMove());
+        undoButton.setTranslateZ(0);
+        FXGL.addUINode(undoButton);
+        updateUndoButtonState();
+
+        // color space outside of board
+        Entity uiBackground = entityFactory.spawnUiBackground();
+        gameWorld.addEntity(uiBackground);
+    }
+
+    @Override
+    protected void initInput() {
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
+    }
+
+    private void handleUndoMove() {
+        if (gameController.canUndo()) {
+            gameController.undoLastMove();
+            updateUndoButtonState();
+        }
+    }
+
+    private void updateUndoButtonState() {
+        undoButton.setDisable(!gameController.canUndo());
+        if (!gameController.canUndo()) ButtonStyle.DISABLED.applyFor(undoButton);
+        else ButtonStyle.HOVER.applyFor(undoButton);
     }
 
     private void updateBoard() {
@@ -86,13 +131,6 @@ public class ChessApplication extends GameApplication {
                     Entity pieceEntity = entityFactory.spawnPiece(board.getPieceAt(s), s);
                     gameWorld.addEntity(pieceEntity);
                 });
-    }
-
-    @Override
-    protected void initInput() {
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseClick);
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
-        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
     }
 
     private void playSoundForLastMove(Move lastMove) {
@@ -174,6 +212,7 @@ public class ChessApplication extends GameApplication {
             updateBoard();
             if (gameController.isGameOver()) showGameOverDialog();
             if (gameController.getBoard().getLastMove().isPromotion()) showPromotionDialog(to);
+            updateUndoButtonState();
         }
 
         // reset selection
@@ -264,7 +303,7 @@ public class ChessApplication extends GameApplication {
                     Piece pawn = gameController.getBoard().getPieceAt(position);
                     gameController.getBoard().promotePawn(pawn, pieceType, position);
                     updateBoard();
-                    gameController.updateLastMove();
+                    gameController.updateLastMoveForPromotion();
                 },
                 QUEEN, KNIGHT, BISHOP, ROOK);
     }

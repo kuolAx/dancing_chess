@@ -1,5 +1,6 @@
 package com.kuolax.chess.core.model.move;
 
+import com.kuolax.chess.core.model.Board;
 import com.kuolax.chess.core.model.Square;
 import com.kuolax.chess.core.model.piece.Piece;
 import com.kuolax.chess.core.model.piece.PieceColor;
@@ -19,4 +20,10 @@ public record Move(PieceColor playerColor,
                    Square enPassantTarget,
                    boolean isPromotion,
                    PieceType promotionType) {
+    
+    public void undo(Board board) {
+        // update board state
+        // update zobrist hash
+        // send update to frontend for redrawing of board
+    }
 }

@@ -89,6 +89,10 @@ public class Board {
         return false;
     }
 
+    public boolean undoMove(Move move) {
+        return true;
+    }
+
     public Piece getPieceAt(Square at) {
         return pieces.get(at);
     }

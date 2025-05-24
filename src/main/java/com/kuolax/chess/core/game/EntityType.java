@@ -10,5 +10,6 @@ public enum EntityType {
     TAKEABLE_PIECE_HIGHLIGHT,
     CHECK_HIGHLIGHT,
     DRAG_TARGET_HIGHLIGHT,
+    BACKGROUND,
     TEXT
 }

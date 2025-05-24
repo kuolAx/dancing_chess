@@ -12,6 +12,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
+import static com.kuolax.chess.core.game.EntityType.BACKGROUND;
 import static com.kuolax.chess.core.game.EntityType.CHECK_HIGHLIGHT;
 import static com.kuolax.chess.core.game.EntityType.DRAG_TARGET_HIGHLIGHT;
 import static com.kuolax.chess.core.game.EntityType.LAST_MOVE_HIGHLIGHT;
@@ -21,6 +24,7 @@ import static com.kuolax.chess.core.game.EntityType.SELECTED_PIECE_HIGHLIGHT;
 import static com.kuolax.chess.core.game.EntityType.SQUARE;
 import static com.kuolax.chess.core.game.EntityType.TAKEABLE_PIECE_HIGHLIGHT;
 import static com.kuolax.chess.core.model.Square.SQUARE_SIZE;
+import static javafx.scene.paint.Color.DARKORCHID;
 import static javafx.scene.paint.Color.DARKRED;
 import static javafx.scene.paint.Color.YELLOWGREEN;
 
@@ -160,5 +164,17 @@ public class ChessEntityFactory implements EntityFactory {
         draggedPieceEntity.setOpacity(0.8);
         draggedPieceEntity.setZIndex(2);
         return draggedPieceEntity;
+    }
+
+    @Spawns("ui-background")
+    public Entity spawnUiBackground() {
+        return FXGL.entityBuilder()
+                .type(BACKGROUND)
+                .at(SQUARE_SIZE * 8, 0)
+                .view(new Rectangle(SQUARE_SIZE * (getAppWidth() / SQUARE_SIZE - 8),
+                        SQUARE_SIZE * (getAppHeight() / SQUARE_SIZE), DARKORCHID))
+                .zIndex(0)
+                .opacity(0.7)
+                .build();
     }
 }

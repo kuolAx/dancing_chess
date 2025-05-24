@@ -73,6 +73,69 @@ public class GameController {
         return false;
     }
 
+    public boolean canUndo() {
+        return !moveHistory.isEmpty();
+    }
+
+    public boolean undoLastMove() {
+        if (canUndo()) return false;
+
+        Move lastMove = moveHistory.removeLast();
+        board.undoMove(lastMove);
+
+        //create inverted Move for zobrist Hashing?
+        updateZobristHash(lastMove);
+        // remove zobrist hash counter for current hash
+
+        // further undo logic
+
+        return true;
+    }
+
+    public void resetGame() {
+        board = new Board();
+        currentPlayer = WHITE;
+        opponent = BLACK;
+        roundNumber = 1;
+        gameState = ONGOING;
+        moveHistory = new ArrayList<>();
+    }
+
+    public void updateLastMoveForPromotion() {
+        moveHistory.removeLast();
+        moveHistory.add(board.getLastMove());
+    }
+
+    private void switchPlayer() {
+        currentPlayer = opponent;
+        opponent = currentPlayer.getOpponent();
+        if (currentPlayer == WHITE) roundNumber++;
+    }
+
+    private void updateGameState(Move lastMove) {
+        if (isThreefoldRepetition(positionHistory))
+            gameState = DRAW_BY_REPETITION;
+        else if (lastMove.isCheckmate())
+            gameState = (currentPlayer == WHITE) ? BLACK_WINS : WHITE_WINS;
+        else if (lastMove.isStaleMate())
+            gameState = STALEMATE;
+        else
+            gameState = ONGOING;
+    }
+
+    private boolean isThreefoldRepetition(Map<Long, Integer> positionHistory) {
+        return positionHistory.getOrDefault(currentPositionHash, 0) >= 3;
+    }
+
+    private void updateEnPassant(Move move) {
+        enPassantFile = null;
+        if (move.enPassantTarget() != null) enPassantFile = move.enPassantTarget().getX();
+    }
+
+    private void recordCurrentPosition() {
+        positionHistory.merge(currentPositionHash, 1, Integer::sum);
+    }
+
     private void updateZobristHash(Move lastMove) {
         boolean oldWhiteKingSide = whiteCanCastleKingSide;
         boolean oldWhiteQueenSide = whiteCanCastleQueenSide;
@@ -102,50 +165,6 @@ public class GameController {
         recordCurrentPosition();
     }
 
-    public void resetGame() {
-        board = new Board();
-        currentPlayer = WHITE;
-        opponent = BLACK;
-        roundNumber = 1;
-        gameState = ONGOING;
-        moveHistory = new ArrayList<>();
-    }
-
-    private void switchPlayer() {
-        currentPlayer = opponent;
-        opponent = currentPlayer.getOpponent();
-        if (currentPlayer == WHITE) roundNumber++;
-    }
-
-    private void updateGameState(Move lastMove) {
-        if (isThreefoldRepetition(positionHistory))
-            gameState = DRAW_BY_REPETITION;
-        else if (lastMove.isCheckmate())
-            gameState = (currentPlayer == WHITE) ? BLACK_WINS : WHITE_WINS;
-        else if (lastMove.isStaleMate())
-            gameState = STALEMATE;
-        else
-            gameState = ONGOING;
-    }
-
-    public void updateLastMove() {
-        moveHistory.removeLast();
-        moveHistory.add(board.getLastMove());
-    }
-
-    private boolean isThreefoldRepetition(Map<Long, Integer> positionHistory) {
-        return positionHistory.getOrDefault(currentPositionHash, 0) >= 3;
-    }
-
-    private void updateEnPassant(Move move) {
-        enPassantFile = null;
-        if (move.enPassantTarget() != null) enPassantFile = move.enPassantTarget().getX();
-    }
-
-    private void recordCurrentPosition() {
-        positionHistory.merge(currentPositionHash, 1, Integer::sum);
-    }
-
     // update castling rights based on last move
     private void updateCastlingRights(Move move) {
         Piece piece = move.movedPiece();
@@ -154,7 +173,7 @@ public class GameController {
         int fromCol = move.from().getX();
         int toRow = move.to().getY();
         int toCol = move.to().getX();
-        
+
         // king moves - lose all castling rights for that player
         updateCastlingAfterKingMoved(piece, playerColor);
         // rook moves - lose castling rights for that side
@@ -196,7 +215,7 @@ public class GameController {
 
     // recalculate complete position hash (fallback method)
     private void updateCurrentPositionHash() {
-        currentPositionHash = com.kuolax.chess.util.ZobristHash.calculateZobristHash(
+        currentPositionHash = ZobristHash.calculateZobristHash(
                 board, currentPlayer,
                 whiteCanCastleKingSide, whiteCanCastleQueenSide,
                 blackCanCastleKingSide, blackCanCastleQueenSide,
